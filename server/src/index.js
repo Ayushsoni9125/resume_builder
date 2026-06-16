@@ -10,6 +10,7 @@ const connectDB = require('./config/db');
 const authRoutes = require('./routes/auth');
 const resumeRoutes = require('./routes/resume');
 const aiRoutes = require('./routes/ai');
+const sanitize = require('./middleware/sanitize');
 
 const app = express();
 
@@ -47,6 +48,9 @@ app.use(cors({
 // Body parsers
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// Sanitize request data (NoSQL injection and XSS protection)
+app.use(sanitize);
 
 // Static files (profile photos)
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
