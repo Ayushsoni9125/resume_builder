@@ -19,14 +19,10 @@ const sanitizeInput = (input) => {
   }
   
   if (typeof input === 'string') {
-    // Prevent XSS: HTML Escape special characters
+    // Prevent XSS: neutralized HTML tags by escaping `<` and `>`
     return input
-      .replace(/&/g, '&amp;')
       .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#x27;')
-      .replace(/\//g, '&#x2F;');
+      .replace(/>/g, '&gt;');
   }
   
   return input;
