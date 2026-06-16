@@ -8,7 +8,7 @@ import {
 import toast from 'react-hot-toast';
 import useAuthStore from '../store/authStore';
 import useResumeStore from '../store/resumeStore';
-import { resumeAPI } from '../api';
+import { resumeAPI, aiAPI } from '../api';
 
 const TEMPLATE_LABELS = {
   'modern-professional': 'Modern Professional',
@@ -104,6 +104,10 @@ function ResumeCard({ resume, onDelete, onDuplicate, onShare }) {
                   className="flex items-center gap-2 w-full px-4 py-2.5 text-sm text-dark-700 hover:bg-dark-100 hover:text-dark-900 transition-colors">
                   <Share2 className="w-3.5 h-3.5" /> {resume.isPublic ? 'Unshare' : 'Share Link'}
                 </button>
+                <button onClick={() => { navigate(`/portfolio/${resume._id}`); setMenuOpen(false); }}
+                  className="flex items-center gap-2 w-full px-4 py-2.5 text-sm text-dark-700 hover:bg-dark-100 hover:text-dark-900 transition-colors">
+                  <Sparkles className="w-3.5 h-3.5 text-primary-500" /> Portfolio Site
+                </button>
                 <div className="h-px bg-dark-200 mx-3" />
                 <button onClick={() => { onDelete(resume._id); setMenuOpen(false); }}
                   className="flex items-center gap-2 w-full px-4 py-2.5 text-sm text-red-500 hover:bg-red-500/10 transition-colors">
@@ -122,6 +126,11 @@ export default function Dashboard() {
   const { user, logout } = useAuthStore();
   const { resumes, setResumes, isLoadingResumes, setLoadingResumes, removeResume } = useResumeStore();
   const navigate = useNavigate();
+
+  // Upload Parser states
+  const [uploadModalOpen, setUploadModalOpen] = useState(false);
+  const [uploadText, setUploadText] = useState('');
+  const [isParsing, setIsParsing] = useState(false);
 
   useEffect(() => {
     const fetchResumes = async () => {
@@ -176,6 +185,46 @@ export default function Dashboard() {
     }
   };
 
+  const handleUploadParse = async (e) => {
+    e.preventDefault();
+    if (!uploadText.trim()) return toast.error('Please paste or upload resume text');
+    
+    setIsParsing(true);
+    try {
+      const { data: parseData } = await aiAPI.parseResume(uploadText);
+      const parsedResume = parseData.resumeData;
+      
+      const { data: createData } = await resumeAPI.create({
+        ...parsedResume,
+        title: `${parsedResume.personalInfo?.fullName || 'Parsed'} Resume`,
+        isDraft: false
+      });
+      
+      toast.success('Resume parsed successfully! Opening editor...');
+      navigate(`/resume/${createData.resume._id}/edit`);
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to parse resume');
+    } finally {
+      setIsParsing(false);
+      setUploadModalOpen(false);
+      setUploadText('');
+    }
+  };
+
+  const handleFileUpload = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (evt) => {
+      setUploadText(evt.target.result);
+      toast.success('File loaded! Click parse below to generate resume.');
+    };
+    reader.onerror = () => {
+      toast.error('Failed to read file');
+    };
+    reader.readAsText(file);
+  };
+
   const stats = [
     { label: 'Total Resumes', value: resumes.length, icon: FileText, color: 'text-primary-600' },
     { label: 'Avg ATS Score', value: resumes.length ? Math.round(resumes.reduce((a, r) => a + (r.atsScore?.score || 0), 0) / resumes.length) : 0, icon: TrendingUp, color: 'text-green-600' },
@@ -187,12 +236,19 @@ export default function Dashboard() {
       {/* Navbar */}
       <nav className="sticky top-0 z-30 border-b border-dark-200 bg-white/80 backdrop-blur-sm">
         <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-primary flex items-center justify-center shadow-glow">
-              <Sparkles className="w-4 h-4 text-white" />
+          <div className="flex items-center gap-6">
+            <Link to="/" className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-lg bg-gradient-primary flex items-center justify-center shadow-glow">
+                <Sparkles className="w-4 h-4 text-white" />
+              </div>
+              <span className="font-display font-bold text-dark-900">ResumeAI</span>
+            </Link>
+            
+            <div className="flex items-center gap-4 text-sm font-semibold">
+              <Link to="/dashboard" className="text-primary-600">Resumes</Link>
+              <Link to="/cover-letters" className="text-dark-600 hover:text-dark-900">Cover Letters</Link>
             </div>
-            <span className="font-display font-bold text-dark-900">ResumeAI</span>
-          </Link>
+          </div>
 
           <div className="flex items-center gap-3">
             <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-dark-200">
@@ -217,9 +273,14 @@ export default function Dashboard() {
             </h1>
             <p className="text-dark-600 mt-1">Manage and track all your professional resumes</p>
           </div>
-          <button onClick={() => navigate('/resume/new')} className="btn-primary" id="create-resume-btn">
-            <Plus className="w-4 h-4" /> New Resume
-          </button>
+          <div className="flex gap-2">
+            <button onClick={() => setUploadModalOpen(true)} className="btn-secondary py-2 px-4 text-sm" id="upload-resume-btn">
+              <Download className="w-4 h-4 rotate-180" /> Upload & Parse
+            </button>
+            <button onClick={() => navigate('/resume/new')} className="btn-primary py-2 px-4 text-sm" id="create-resume-btn">
+              <Plus className="w-4 h-4" /> New Resume
+            </button>
+          </div>
         </div>
 
         {/* Stats */}
@@ -272,6 +333,71 @@ export default function Dashboard() {
           </AnimatePresence>
         )}
       </div>
+
+      {/* Upload & Parse Modal */}
+      {uploadModalOpen && (
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl w-full max-w-lg flex flex-col shadow-2xl border border-dark-200">
+            {/* Header */}
+            <div className="flex items-center justify-between px-6 py-4 border-b border-dark-200">
+              <h2 className="font-display font-bold text-dark-900 flex items-center gap-2">
+                Import Existing Resume <Sparkles className="w-4 h-4 text-primary-500" />
+              </h2>
+              <button onClick={() => setUploadModalOpen(false)} className="btn-ghost p-1">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Body */}
+            <div className="p-6 space-y-4">
+              <div className="text-xs text-dark-600 leading-relaxed bg-primary-500/5 border border-primary-500/10 p-3.5 rounded-2xl">
+                Paste your raw resume text or load a text file (.txt). Gemini AI will dynamically extract your experience, projects, education, and skills.
+              </div>
+
+              <div>
+                <label className="input-label">Load Text File</label>
+                <input
+                  type="file"
+                  accept=".txt"
+                  onChange={handleFileUpload}
+                  className="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-primary-500/10 file:text-primary-600 hover:file:bg-primary-500/20"
+                />
+              </div>
+
+              <form onSubmit={handleUploadParse} className="space-y-4 text-left">
+                <div>
+                  <label className="input-label">Resume Text (Paste directly)</label>
+                  <textarea
+                    placeholder="John Doe&#10;john@gmail.com&#10;Experience:&#10;- Software Engineer at Google (2022-2024)..."
+                    value={uploadText}
+                    onChange={(e) => setUploadText(e.target.value)}
+                    className="input-field h-48 resize-none font-sans text-xs"
+                    required
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={isParsing}
+                  className="btn-primary w-full justify-center py-2.5 mt-2"
+                >
+                  {isParsing ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      Parsing with AI...
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="w-4 h-4" />
+                      Parse & Generate Resume
+                    </>
+                  )}
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

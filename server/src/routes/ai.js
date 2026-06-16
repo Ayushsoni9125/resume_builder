@@ -8,7 +8,11 @@ const {
   generateImprovements,
   calculateATSScore,
   generateExperienceDescription,
-  importSocials
+  importSocials,
+  parseResume,
+  matchJobDescription,
+  rewriteSection,
+  generateCoverLetter
 } = require('../controllers/aiController');
 
 // All AI routes are protected
@@ -21,5 +25,9 @@ router.post('/improve', generateImprovements);
 router.post('/ats-score', calculateATSScore);
 router.post('/experience-description', generateExperienceDescription);
 router.post('/import-socials', importSocials);
+router.post('/parse', parseResume);
+router.post('/job-match', matchJobDescription);
+router.post('/rewrite', rewriteSection);
+router.post('/generate-cover-letter', generateCoverLetter);
 
 module.exports = router;

@@ -4,6 +4,8 @@ import toast from 'react-hot-toast';
 import useResumeStore from '../../store/resumeStore';
 import { aiAPI } from '../../api';
 
+import AIRewriter from './AIRewriter';
+
 const emptyExp = { company: '', role: '', startDate: '', endDate: '', current: false, location: '', description: '' };
 
 function ExperienceCard({ exp, index, onUpdate, onRemove }) {
@@ -83,9 +85,15 @@ function ExperienceCard({ exp, index, onUpdate, onRemove }) {
           <div className="sm:col-span-2">
             <div className="flex items-center justify-between mb-1.5">
               <label className="input-label mb-0">Description</label>
-              <button type="button" onClick={generateDesc} disabled={generating} className="btn-ai" id={`exp-ai-${index}`}>
-                {generating ? <><Loader2 className="w-3 h-3 animate-spin" /> Generating...</> : <><Sparkles className="w-3 h-3" /> AI Generate</>}
-              </button>
+              <div className="flex items-center gap-2">
+                <AIRewriter
+                  text={exp.description || ''}
+                  onRewrite={newVal => onUpdate('description', newVal)}
+                />
+                <button type="button" onClick={generateDesc} disabled={generating} className="btn-ai" id={`exp-ai-${index}`}>
+                  {generating ? <><Loader2 className="w-3 h-3 animate-spin" /> Generating...</> : <><Sparkles className="w-3 h-3" /> AI Generate</>}
+                </button>
+              </div>
             </div>
             <textarea value={exp.description} onChange={e => onUpdate('description', e.target.value)} rows={4}
               placeholder="• Developed scalable microservices reducing latency by 40%&#10;• Led a team of 5 engineers to deliver product features on time&#10;• Integrated CI/CD pipelines improving deployment frequency by 3x"

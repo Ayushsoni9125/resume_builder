@@ -32,4 +32,15 @@ export const aiAPI = {
   calculateATS: (data) => api.post('/ai/ats-score', data),
   generateExperienceDesc: (data) => api.post('/ai/experience-description', data),
   importSocials: (data) => api.post('/ai/import-socials', data),
+  parseResume: (text) => api.post('/ai/parse', { text }),
+  matchJobDescription: (resume, jobDescription) => api.post('/ai/job-match', { resume, jobDescription }),
+  rewriteSection: (text, option) => api.post('/ai/rewrite', { text, option }),
+  generateCoverLetter: (data) => api.post('/ai/generate-cover-letter', data),
+};
+
+export const coverLetterAPI = {
+  getAll: () => api.get('/cover-letters'),
+  getById: (id) => api.get(`/cover-letters/${id}`),
+  create: (data) => api.post('/cover-letters', data),
+  delete: (id) => api.delete(`/cover-letters/${id}`),
 };

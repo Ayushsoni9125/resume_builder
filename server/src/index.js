@@ -10,6 +10,7 @@ const connectDB = require('./config/db');
 const authRoutes = require('./routes/auth');
 const resumeRoutes = require('./routes/resume');
 const aiRoutes = require('./routes/ai');
+const coverLetterRoutes = require('./routes/coverLetter');
 const sanitize = require('./middleware/sanitize');
 
 const app = express();
@@ -78,6 +79,7 @@ app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 app.use('/api/auth', authRoutes);
 app.use('/api/resumes', resumeRoutes);
 app.use('/api/ai', aiRoutes);
+app.use('/api/cover-letters', coverLetterRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {

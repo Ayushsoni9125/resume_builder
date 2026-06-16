@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { Sparkles, Loader2, RefreshCw } from 'lucide-react';
+import { Sparkles, Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import useResumeStore from '../../store/resumeStore';
 import { aiAPI } from '../../api';
+import AIRewriter from './AIRewriter';
 
 export default function SummaryStep() {
   const { currentResume, updateSection } = useResumeStore();
@@ -37,19 +38,25 @@ export default function SummaryStep() {
       <div className="form-section">
         <div className="flex items-center justify-between mb-3">
           <label className="input-label mb-0">Summary</label>
-          <button
-            type="button"
-            onClick={handleGenerate}
-            disabled={generating}
-            className="btn-ai"
-            id="generate-summary-btn"
-          >
-            {generating ? (
-              <><Loader2 className="w-3 h-3 animate-spin" /> Generating...</>
-            ) : (
-              <><Sparkles className="w-3 h-3" /> AI Generate</>
-            )}
-          </button>
+          <div className="flex items-center gap-2">
+            <AIRewriter
+              text={currentResume.summary || ''}
+              onRewrite={newVal => updateSection('summary', newVal)}
+            />
+            <button
+              type="button"
+              onClick={handleGenerate}
+              disabled={generating}
+              className="btn-ai"
+              id="generate-summary-btn"
+            >
+              {generating ? (
+                <><Loader2 className="w-3 h-3 animate-spin" /> Generating...</>
+              ) : (
+                <><Sparkles className="w-3 h-3" /> AI Generate</>
+              )}
+            </button>
+          </div>
         </div>
 
         <div className="relative">

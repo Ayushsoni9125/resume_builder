@@ -4,6 +4,8 @@ import toast from 'react-hot-toast';
 import useResumeStore from '../../store/resumeStore';
 import { aiAPI } from '../../api';
 
+import AIRewriter from './AIRewriter';
+
 const emptyProject = { name: '', techStack: [], githubLink: '', liveDemo: '', description: '' };
 
 function ProjectCard({ project, index, onUpdate, onRemove }) {
@@ -106,9 +108,15 @@ function ProjectCard({ project, index, onUpdate, onRemove }) {
           <div>
             <div className="flex items-center justify-between mb-1.5">
               <label className="input-label mb-0">Description</label>
-              <button type="button" onClick={generateDesc} disabled={generating || !project.name} className="btn-ai" id={`proj-ai-${index}`}>
-                {generating ? <><Loader2 className="w-3 h-3 animate-spin" /> Generating...</> : <><Sparkles className="w-3 h-3" /> AI Generate</>}
-              </button>
+              <div className="flex items-center gap-2">
+                <AIRewriter
+                  text={project.description || ''}
+                  onRewrite={newVal => onUpdate('description', newVal)}
+                />
+                <button type="button" onClick={generateDesc} disabled={generating || !project.name} className="btn-ai" id={`proj-ai-${index}`}>
+                  {generating ? <><Loader2 className="w-3 h-3 animate-spin" /> Generating...</> : <><Sparkles className="w-3 h-3" /> AI Generate</>}
+                </button>
+              </div>
             </div>
             <textarea value={project.description} onChange={e => onUpdate('description', e.target.value)} rows={4}
               placeholder="• Built a full-stack e-commerce platform with React and Node.js&#10;• Implemented JWT authentication and payment gateway integration&#10;• Achieved 99.9% uptime with Docker and CI/CD pipeline"

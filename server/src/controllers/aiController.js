@@ -426,6 +426,218 @@ Output format (MUST be a valid raw JSON object, do not wrap in backticks or mark
   }
 };
 
+// @desc    Parse raw resume text into structured schema
+// @route   POST /api/ai/parse
+// @access  Private
+const parseResume = async (req, res) => {
+  try {
+    const { text } = req.body;
+    if (!text) {
+      return res.status(400).json({ success: false, message: 'Resume text is required' });
+    }
+
+    const prompt = `You are a professional resume parser. Parse the following raw resume text and extract all details into a structured JSON object matching the exact resume schema. Clean, standardize, and format the data.
+
+Resume Text:
+${text}
+
+Requirements:
+- Extract personal info (fullName, email, phone, location, linkedin, github, portfolio).
+- Generate a summary if none is explicitly found (or enhance the existing one).
+- Extract education (degree, institution, startDate, endDate, gpa, description).
+- Extract experience (company, role, startDate, endDate, location, description).
+- Extract projects (name, techStack, githubLink, liveDemo, description).
+- Extract technical and soft skills.
+- Extract certifications (name, organization, date, url) and achievements.
+- Return ONLY valid raw JSON in this exact structure (do not wrap in markdown or backticks):
+{
+  "personalInfo": {
+    "fullName": "",
+    "email": "",
+    "phone": "",
+    "location": "",
+    "linkedin": "",
+    "github": "",
+    "portfolio": ""
+  },
+  "summary": "",
+  "education": [
+    {
+      "degree": "",
+      "institution": "",
+      "startDate": "",
+      "endDate": "",
+      "gpa": "",
+      "description": ""
+    }
+  ],
+  "experience": [
+    {
+      "company": "",
+      "role": "",
+      "startDate": "",
+      "endDate": "",
+      "location": "",
+      "description": ""
+    }
+  ],
+  "projects": [
+    {
+      "name": "",
+      "techStack": [],
+      "githubLink": "",
+      "liveDemo": "",
+      "description": ""
+    }
+  ],
+  "skills": {
+    "technical": [],
+    "soft": []
+  },
+  "certifications": [
+    {
+      "name": "",
+      "organization": "",
+      "date": "",
+      "url": ""
+    }
+  ],
+  "achievements": []
+}`;
+
+    const rawText = await generateContent(prompt);
+    const jsonMatch = rawText.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) {
+      return res.status(500).json({ success: false, message: 'Failed to parse resume text into JSON' });
+    }
+
+    const resumeData = JSON.parse(jsonMatch[0]);
+    res.json({ success: true, resumeData });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// @desc    Match resume against job description
+// @route   POST /api/ai/job-match
+// @access  Private
+const matchJobDescription = async (req, res) => {
+  try {
+    const { resume, jobDescription } = req.body;
+    if (!resume || !jobDescription) {
+      return res.status(400).json({ success: false, message: 'Resume data and job description are required' });
+    }
+
+    const prompt = `Compare the following resume data with the target job description to evaluate compatibility, missing keywords, matched keywords, and suggestions for alignment.
+
+Resume:
+${JSON.stringify(resume, null, 2)}
+
+Job Description:
+${jobDescription}
+
+Evaluate ATS matching and return ONLY valid raw JSON in this exact structure:
+{
+  "score": 82,
+  "matchedKeywords": ["React", "TypeScript", "Node.js"],
+  "missingKeywords": ["Docker", "GraphQL", "CI/CD"],
+  "recommendations": [
+    "Detail your experience with Docker under the project/experience section.",
+    "Optimize your summary to highlight full-stack capabilities matching the job requirements."
+  ],
+  "summary": "Your resume is a strong match for this role, but could rank higher by adding Docker and CI/CD keywords."
+}`;
+
+    const rawText = await generateContent(prompt);
+    const jsonMatch = rawText.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) {
+      return res.status(500).json({ success: false, message: 'Failed to parse job match analysis' });
+    }
+
+    const matchData = JSON.parse(jsonMatch[0]);
+    res.json({ success: true, matchData });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// @desc    Rewrite description or text block
+// @route   POST /api/ai/rewrite
+// @access  Private
+const rewriteSection = async (req, res) => {
+  try {
+    const { text, option } = req.body;
+    if (!text) {
+      return res.status(400).json({ success: false, message: 'Text is required' });
+    }
+
+    let instruction = 'Make it sound professional, clean, and optimized for a resume.';
+    if (option === 'star') {
+      instruction = 'Rewrite this description using the STAR method (Situation, Task, Action, Result). Highlight actions with strong verbs and list clear results or impact.';
+    } else if (option === 'concise') {
+      instruction = 'Rewrite this description to be more concise and direct, removing fluff while retaining technical accuracy.';
+    } else if (option === 'professional') {
+      instruction = 'Rewrite this to use highly professional industry vocabulary, active voice, and power verbs.';
+    }
+
+    const prompt = `You are a resume editor. ${instruction}
+Original Text:
+${text}
+
+Requirements:
+- Keep the original meaning and core facts
+- Use bullet points (•) if the input was bulleted or a list
+- Return ONLY the rewritten text, no greeting or extra commentary`;
+
+    const rewritten = await generateContent(prompt);
+    res.json({ success: true, rewritten: rewritten.trim() });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// @desc    Generate Cover Letter text
+// @route   POST /api/ai/generate-cover-letter
+// @access  Private
+const generateCoverLetter = async (req, res) => {
+  try {
+    const { resume, jobTitle, company, jobDescription } = req.body;
+    if (!resume || !jobTitle || !company) {
+      return res.status(400).json({ success: false, message: 'Resume, job title, and company are required' });
+    }
+
+    const prompt = `Write a high-converting, professional, ATS-optimized cover letter matching this user's resume details to a specific job post.
+
+Applicant Info:
+- Name: ${resume.personalInfo?.fullName || 'Applicant'}
+- Email: ${resume.personalInfo?.email || ''}
+- Phone: ${resume.personalInfo?.phone || ''}
+- Location: ${resume.personalInfo?.location || ''}
+- Skills: ${JSON.stringify(resume.skills || {})}
+
+Job Details:
+- Title: ${jobTitle}
+- Company: ${company}
+- Job Description: ${jobDescription || 'Not specified'}
+
+Resume Work History & Projects (use these to draw relevant achievements):
+- Experience: ${JSON.stringify(resume.experience || [])}
+- Projects: ${JSON.stringify(resume.projects || [])}
+
+Requirements:
+- Follow standard professional cover letter structure (date, headers, introduction, body highlighting matching experience/projects, call-to-action closing).
+- Write in a natural, confident, and professional tone.
+- Do NOT use placeholders (like [Date] or [Insert Name]). If details are missing, leave them out or use standard professional styling.
+- Keep it under 400 words.
+- Return ONLY the text of the cover letter, ready to use.`;
+
+    const content = await generateContent(prompt);
+    res.json({ success: true, content: content.trim() });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 module.exports = {
   generateSummary,
   generateProjectDescription,
@@ -433,5 +645,9 @@ module.exports = {
   generateImprovements,
   calculateATSScore,
   generateExperienceDescription,
-  importSocials
+  importSocials,
+  parseResume,
+  matchJobDescription,
+  rewriteSection,
+  generateCoverLetter
 };

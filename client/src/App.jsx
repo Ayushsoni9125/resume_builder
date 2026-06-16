@@ -10,6 +10,8 @@ import Dashboard from './pages/Dashboard';
 import ResumeEditor from './pages/ResumeEditor';
 import ResumePreview from './pages/ResumePreview';
 import SharedResume from './pages/SharedResume';
+import CoverLetters from './pages/CoverLetters';
+import PortfolioGenerator from './pages/PortfolioGenerator';
 
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated } = useAuthStore();
@@ -52,6 +54,8 @@ export default function App() {
         <Route path="/resume/new" element={<ProtectedRoute><ResumeEditor /></ProtectedRoute>} />
         <Route path="/resume/:id/edit" element={<ProtectedRoute><ResumeEditor /></ProtectedRoute>} />
         <Route path="/resume/:id/preview" element={<ProtectedRoute><ResumePreview /></ProtectedRoute>} />
+        <Route path="/cover-letters" element={<ProtectedRoute><CoverLetters /></ProtectedRoute>} />
+        <Route path="/portfolio/:id" element={<ProtectedRoute><PortfolioGenerator /></ProtectedRoute>} />
 
         {/* Catch all */}
         <Route path="*" element={<Navigate to="/" replace />} />
