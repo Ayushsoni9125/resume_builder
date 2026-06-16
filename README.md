@@ -2,6 +2,11 @@
 
 A production-ready full-stack AI Resume Builder built with React, Tailwind CSS, Node.js, Express, MongoDB, and Google Gemini AI.
 
+## 🔗 Live Deployments
+
+- **Frontend (Vercel)**: [https://ats-checker-resume-builder.vercel.app](https://ats-checker-resume-builder.vercel.app)
+- **Backend (Render)**: [https://resume-builder-daq4.onrender.com](https://resume-builder-daq4.onrender.com)
+
 ## 🚀 Quick Start
 
 ### Prerequisites
