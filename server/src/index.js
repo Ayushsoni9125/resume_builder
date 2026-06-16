@@ -38,8 +38,27 @@ const aiLimiter = rateLimit({
 app.use('/api/ai/', aiLimiter);
 
 // CORS
+const allowedOrigins = [
+  'http://localhost:5173',
+  'http://localhost:5176',
+  'http://localhost:3000',
+  'https://ats-checker-resume-builder.vercel.app',
+  'https://client-beta-silk-62.vercel.app'
+];
+
 app.use(cors({
-  origin: [process.env.CLIENT_URL || 'http://localhost:5173', 'http://localhost:3000'],
+  origin: (origin, callback) => {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) !== -1 || origin === process.env.CLIENT_URL) {
+      return callback(null, true);
+    }
+    // Allow any vercel preview deployments
+    if (origin.endsWith('.vercel.app')) {
+      return callback(null, true);
+    }
+    callback(new Error('Not allowed by CORS'));
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
