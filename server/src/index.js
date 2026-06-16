@@ -18,6 +18,10 @@ try { coverLetterRoutes = require('./routes/coverLetter'); console.log('✅ Cove
 
 const app = express();
 
+// Trust the first proxy hop (required on Render, Heroku, Railway, etc.)
+// This fixes ERR_ERL_UNEXPECTED_X_FORWARDED_FOR from express-rate-limit v7
+app.set('trust proxy', 1);
+
 // Connect to MongoDB
 connectDB();
 
@@ -29,7 +33,8 @@ app.use(morgan('dev'));
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 100,
-  message: { success: false, message: 'Too many requests, please try again later.' }
+  message: { success: false, message: 'Too many requests, please try again later.' },
+  validate: { trustProxy: false } // suppress ERR_ERL_UNEXPECTED_X_FORWARDED_FOR (we handle it via app.set trust proxy)
 });
 app.use('/api/', limiter);
 
@@ -37,7 +42,8 @@ app.use('/api/', limiter);
 const aiLimiter = rateLimit({
   windowMs: 60 * 1000, // 1 minute
   max: 20,
-  message: { success: false, message: 'Too many AI requests, please wait a moment.' }
+  message: { success: false, message: 'Too many AI requests, please wait a moment.' },
+  validate: { trustProxy: false }
 });
 app.use('/api/ai/', aiLimiter);
 
