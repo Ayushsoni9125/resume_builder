@@ -7,7 +7,8 @@ const {
   suggestSkills,
   generateImprovements,
   calculateATSScore,
-  generateExperienceDescription
+  generateExperienceDescription,
+  importSocials
 } = require('../controllers/aiController');
 
 // All AI routes are protected
@@ -19,5 +20,6 @@ router.post('/skill-suggestions', suggestSkills);
 router.post('/improve', generateImprovements);
 router.post('/ats-score', calculateATSScore);
 router.post('/experience-description', generateExperienceDescription);
+router.post('/import-socials', importSocials);
 
 module.exports = router;

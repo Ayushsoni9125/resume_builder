@@ -1,7 +1,10 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { User, Mail, Phone, MapPin, Link2, GitBranch, Globe } from 'lucide-react';
+import { User, Mail, Phone, MapPin, Link2, GitBranch, Globe, Sparkles, Loader2 } from 'lucide-react';
+import { motion } from 'framer-motion';
+import toast from 'react-hot-toast';
 import useResumeStore from '../../store/resumeStore';
+import { aiAPI } from '../../api';
 
 const fields = [
   { name: 'fullName', label: 'Full Name *', placeholder: 'John Doe', icon: User, type: 'text' },
@@ -14,8 +17,9 @@ const fields = [
 ];
 
 export default function PersonalInfoStep() {
-  const { currentResume, updateSection } = useResumeStore();
-  const { register, watch, formState: { errors } } = useForm({
+  const { currentResume, updateSection, updateSkills } = useResumeStore();
+  const [importing, setImporting] = useState(false);
+  const { register, watch, setValue, formState: { errors } } = useForm({
     defaultValues: currentResume.personalInfo
   });
   const values = watch();
@@ -25,14 +29,88 @@ export default function PersonalInfoStep() {
     return () => sub.unsubscribe();
   }, [watch]);
 
+  const githubUrl = values.github;
+  const linkedinUrl = values.linkedin;
+  const hasSocialLink = (githubUrl && githubUrl.includes('github.com')) || (linkedinUrl && linkedinUrl.includes('linkedin.com'));
+
+  const handleImportSocials = async () => {
+    const confirmImport = window.confirm(
+      "Would you like to import details from your GitHub/LinkedIn profile? This will automatically update your Full Name, Location, Portfolio, Summary, Technical Skills, and Projects."
+    );
+    if (!confirmImport) return;
+
+    setImporting(true);
+    try {
+      const { data } = await aiAPI.importSocials({ githubUrl, linkedinUrl });
+      if (data.success && data.profileData) {
+        const { personalInfo, summary, skills, projects } = data.profileData;
+        
+        // Update current step form inputs
+        if (personalInfo?.fullName) setValue('fullName', personalInfo.fullName);
+        if (personalInfo?.location) setValue('location', personalInfo.location);
+        if (personalInfo?.portfolio) setValue('portfolio', personalInfo.portfolio);
+        
+        // Update other sections in Zustand store
+        if (summary) updateSection('summary', summary);
+        if (skills?.technical) {
+          updateSkills('technical', skills.technical);
+        }
+        if (projects) {
+          updateSection('projects', projects);
+        }
+        
+        toast.success('Resume details imported successfully! ✨');
+      } else {
+        toast.error('Could not parse profile details.');
+      }
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Profile import failed');
+    } finally {
+      setImporting(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="section-title">Personal Information</h2>
-        <p className="section-subtitle">This will appear at the top of your resume</p>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h2 className="section-title">Personal Information</h2>
+          <p className="section-subtitle">This will appear at the top of your resume</p>
+        </div>
       </div>
 
       <div className="form-section">
+        {/* Dynamic Autofill Card */}
+        {hasSocialLink && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="p-4 rounded-xl bg-primary-500/5 border border-primary-500/20 flex flex-col sm:flex-row items-center justify-between gap-4 mb-6"
+          >
+            <div className="flex items-center gap-2.5">
+              <Sparkles className="w-5 h-5 text-primary-500 animate-pulse shrink-0" />
+              <div className="text-left">
+                <p className="text-sm font-semibold text-dark-900">Autofill Resume with AI</p>
+                <p className="text-xs text-dark-600">We detected GitHub/LinkedIn links. Import summary, skills, and projects automatically.</p>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={handleImportSocials}
+              disabled={importing}
+              className="btn-primary py-2 px-4 text-xs whitespace-nowrap"
+            >
+              {importing ? (
+                <span className="flex items-center gap-1">
+                  <Loader2 className="w-3.5 h-3.5 animate-spin" /> Importing...
+                </span>
+              ) : (
+                'Autofill Profile'
+              )}
+            </button>
+          </motion.div>
+        )}
+
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {fields.map(({ name, label, placeholder, icon: Icon, type }) => (
             <div key={name} className={name === 'fullName' || name === 'email' ? 'sm:col-span-1' : ''}>

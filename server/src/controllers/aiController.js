@@ -277,11 +277,137 @@ Requirements:
   }
 };
 
+// @desc    Import details from social media profiles (GitHub & LinkedIn)
+// @route   POST /api/ai/import-socials
+// @access  Private
+const importSocials = async (req, res) => {
+  try {
+    const { githubUrl, linkedinUrl } = req.body;
+    let githubProfile = null;
+    let githubRepos = null;
+    let linkedinMeta = null;
+
+    if (githubUrl) {
+      try {
+        const match = githubUrl.match(/github\.com\/([^/]+)/);
+        if (match) {
+          const username = match[1];
+          const profileRes = await fetch(`https://api.github.com/users/${username}`, {
+            headers: { 'User-Agent': 'NodeJS-ResumeBuilder-App' }
+          });
+          if (profileRes.status === 200) {
+            githubProfile = await profileRes.json();
+          }
+          const reposRes = await fetch(`https://api.github.com/users/${username}/repos?sort=updated&per_page=5`, {
+            headers: { 'User-Agent': 'NodeJS-ResumeBuilder-App' }
+          });
+          if (reposRes.status === 200) {
+            githubRepos = await reposRes.json();
+          }
+        }
+      } catch (err) {
+        console.error('Error fetching GitHub:', err.message);
+      }
+    }
+
+    if (linkedinUrl) {
+      try {
+        const response = await fetch(linkedinUrl, {
+          headers: {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+            'Accept-Language': 'en-US,en;q=0.5'
+          }
+        });
+        if (response.status === 200) {
+          const html = await response.text();
+          const titleMatch = html.match(/<title>([^<]+)<\/title>/i);
+          const descMatch = html.match(/<meta\s+name="description"\s+content="([^"]+)"/i);
+          const ogTitle = html.match(/<meta\s+property="og:title"\s+content="([^"]+)"/i);
+          const ogDesc = html.match(/<meta\s+property="og:description"\s+content="([^"]+)"/i);
+
+          linkedinMeta = {
+            title: titleMatch ? titleMatch[1] : null,
+            description: descMatch ? descMatch[1] : null,
+            ogTitle: ogTitle ? ogTitle[1] : null,
+            ogDescription: ogDesc ? ogDesc[1] : null
+          };
+        }
+      } catch (err) {
+        console.error('Error fetching LinkedIn:', err.message);
+      }
+    }
+
+    if (!githubProfile && !linkedinMeta) {
+      return res.status(400).json({ success: false, message: 'Could not fetch any information from the provided profile URLs.' });
+    }
+
+    const prompt = `You are an expert resume assistant. Analyze the following social media data for a developer:
+
+GitHub Profile Info:
+${githubProfile ? JSON.stringify({
+  name: githubProfile.name,
+  bio: githubProfile.bio,
+  location: githubProfile.location,
+  blog: githubProfile.blog,
+  company: githubProfile.company
+}) : 'N/A'}
+
+GitHub Repositories:
+${githubRepos ? JSON.stringify(githubRepos.map(r => ({
+  name: r.name,
+  description: r.description,
+  language: r.language,
+  html_url: r.html_url
+}))) : 'N/A'}
+
+LinkedIn Profile Metadata:
+${linkedinMeta ? JSON.stringify(linkedinMeta) : 'N/A'}
+
+Task:
+Extract and generate a structured JSON object representing the user's profile details for a professional resume. Generate natural-sounding professional description points for each project. Clean up and standardize the languages to form high-quality technical skills.
+
+Output format (MUST be a valid raw JSON object, do not wrap in backticks or markdown, do not include comments):
+{
+  "personalInfo": {
+    "fullName": "Name of the developer",
+    "location": "Location from profile",
+    "portfolio": "Blog/portfolio URL"
+  },
+  "summary": "Generate a concise 3-sentence professional summary utilizing their technologies and experience indicators",
+  "skills": {
+    "technical": ["Skill1", "Skill2", "Skill3", "Skill4", "Skill5"]
+  },
+  "projects": [
+    {
+      "name": "Project Name",
+      "githubLink": "GitHub Repository URL",
+      "description": "• Built and deployed a full-stack platform using JavaScript...\\n• Implemented secure authentication and scalable data handling...",
+      "techStack": ["React", "Node.js", "JavaScript"]
+    }
+  ]
+}`;
+
+    const text = await generateContent(prompt);
+    const jsonMatch = text.match(/\{[\s\S]*\}/);
+    
+    if (!jsonMatch) {
+      return res.status(500).json({ success: false, message: 'Failed to parse profile details into structured JSON' });
+    }
+    
+    const profileData = JSON.parse(jsonMatch[0]);
+    res.json({ success: true, profileData });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 module.exports = {
   generateSummary,
   generateProjectDescription,
   suggestSkills,
   generateImprovements,
   calculateATSScore,
-  generateExperienceDescription
+  generateExperienceDescription,
+  importSocials
 };

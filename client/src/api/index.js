@@ -31,4 +31,5 @@ export const aiAPI = {
   generateImprovements: (data) => api.post('/ai/improve', data),
   calculateATS: (data) => api.post('/ai/ats-score', data),
   generateExperienceDesc: (data) => api.post('/ai/experience-description', data),
+  importSocials: (data) => api.post('/ai/import-socials', data),
 };
