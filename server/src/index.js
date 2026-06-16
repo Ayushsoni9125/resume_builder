@@ -65,6 +65,11 @@ app.get('/api/health', (req, res) => {
   res.json({ success: true, message: 'Server is running', timestamp: new Date().toISOString() });
 });
 
+// Root API welcome endpoint
+app.get('/', (req, res) => {
+  res.json({ success: true, message: 'Welcome to the AI Resume Builder API' });
+});
+
 // 404 handler
 app.use((req, res) => {
   res.status(404).json({ success: false, message: `Route ${req.originalUrl} not found` });
