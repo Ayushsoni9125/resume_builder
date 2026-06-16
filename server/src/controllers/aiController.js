@@ -1,6 +1,8 @@
 const { GoogleGenerativeAI } = require('@google/generative-ai');
+// pdf-parse v1.x is used (v2 requires browser APIs and is not Node.js compatible)
 const pdfParse = require('pdf-parse');
 const mammoth = require('mammoth');
+
 
 const getGenAI = () => {
   if (!process.env.GEMINI_API_KEY || process.env.GEMINI_API_KEY === 'your_gemini_api_key_here') {
