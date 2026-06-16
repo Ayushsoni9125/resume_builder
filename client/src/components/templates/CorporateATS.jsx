@@ -23,8 +23,24 @@ export default function CorporateATS({ data }) {
           <p>
             {[p.email, p.phone, p.location].filter(Boolean).join(' | ')}
           </p>
-          <p>
-            {[p.linkedin, p.github, p.portfolio].filter(Boolean).map(u => u.replace('https://', '')).join(' | ')}
+          <p className="flex items-center justify-center flex-wrap gap-x-2">
+            {p.linkedin && (
+              <a href={p.linkedin.startsWith('http') ? p.linkedin : `https://${p.linkedin}`} target="_blank" rel="noopener noreferrer" className="hover:underline">
+                {p.linkedin.replace('https://', '').replace('http://', '')}
+              </a>
+            )}
+            {p.linkedin && (p.github || p.portfolio) && <span> | </span>}
+            {p.github && (
+              <a href={p.github.startsWith('http') ? p.github : `https://${p.github}`} target="_blank" rel="noopener noreferrer" className="hover:underline">
+                {p.github.replace('https://', '').replace('http://', '')}
+              </a>
+            )}
+            {p.github && p.portfolio && <span> | </span>}
+            {p.portfolio && (
+              <a href={p.portfolio.startsWith('http') ? p.portfolio : `https://${p.portfolio}`} target="_blank" rel="noopener noreferrer" className="hover:underline">
+                {p.portfolio.replace('https://', '').replace('http://', '')}
+              </a>
+            )}
           </p>
         </div>
       </div>
@@ -91,8 +107,25 @@ export default function CorporateATS({ data }) {
         <Section title="Projects">
           {data.projects.map((proj, i) => (
             <div key={i} className="mb-2">
-              <strong className="text-[10pt]">{proj.name}</strong>
-              {proj.techStack?.length > 0 && <span className="text-[9pt]"> | {proj.techStack.join(', ')}</span>}
+              <div className="flex justify-between items-baseline">
+                <div>
+                  <strong className="text-[10pt]">{proj.name}</strong>
+                  {proj.techStack?.length > 0 && <span className="text-[9pt]"> | {proj.techStack.join(', ')}</span>}
+                </div>
+                <div className="text-[8pt] text-gray-600 space-x-2">
+                  {proj.githubLink && (
+                    <a href={proj.githubLink.startsWith('http') ? proj.githubLink : `https://${proj.githubLink}`} target="_blank" rel="noopener noreferrer" className="hover:underline">
+                      GitHub
+                    </a>
+                  )}
+                  {proj.githubLink && proj.liveDemo && <span>|</span>}
+                  {proj.liveDemo && (
+                    <a href={proj.liveDemo.startsWith('http') ? proj.liveDemo : `https://${proj.liveDemo}`} target="_blank" rel="noopener noreferrer" className="hover:underline">
+                      Demo
+                    </a>
+                  )}
+                </div>
+              </div>
               {proj.description && <p className="text-[9pt] mt-0.5 leading-relaxed whitespace-pre-line">{proj.description}</p>}
             </div>
           ))}

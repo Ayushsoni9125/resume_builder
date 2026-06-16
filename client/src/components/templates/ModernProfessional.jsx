@@ -24,9 +24,30 @@ export default function ModernProfessional({ data }) {
             {p.email && <p>✉ {p.email}</p>}
             {p.phone && <p>📞 {p.phone}</p>}
             {p.location && <p>📍 {p.location}</p>}
-            {p.linkedin && <p>🔗 {p.linkedin.replace('https://', '').replace('http://', '')}</p>}
-            {p.github && <p>⚡ {p.github.replace('https://', '').replace('http://', '')}</p>}
-            {p.portfolio && <p>🌐 {p.portfolio.replace('https://', '').replace('http://', '')}</p>}
+            {p.linkedin && (
+              <p>
+                🔗{' '}
+                <a href={p.linkedin.startsWith('http') ? p.linkedin : `https://${p.linkedin}`} target="_blank" rel="noopener noreferrer" className="hover:underline text-white">
+                  {p.linkedin.replace('https://', '').replace('http://', '')}
+                </a>
+              </p>
+            )}
+            {p.github && (
+              <p>
+                ⚡{' '}
+                <a href={p.github.startsWith('http') ? p.github : `https://${p.github}`} target="_blank" rel="noopener noreferrer" className="hover:underline text-white">
+                  {p.github.replace('https://', '').replace('http://', '')}
+                </a>
+              </p>
+            )}
+            {p.portfolio && (
+              <p>
+                🌐{' '}
+                <a href={p.portfolio.startsWith('http') ? p.portfolio : `https://${p.portfolio}`} target="_blank" rel="noopener noreferrer" className="hover:underline text-white">
+                  {p.portfolio.replace('https://', '').replace('http://', '')}
+                </a>
+              </p>
+            )}
           </div>
         </div>
 
@@ -160,8 +181,17 @@ export default function ModernProfessional({ data }) {
                   <div className="flex justify-between items-start">
                     <p className="text-[10pt] font-bold text-gray-900">{proj.name}</p>
                     <div className="text-[8pt] text-gray-500">
-                      {proj.githubLink && <span>GitHub · </span>}
-                      {proj.liveDemo && <span>Demo</span>}
+                      {proj.githubLink && (
+                        <a href={proj.githubLink.startsWith('http') ? proj.githubLink : `https://${proj.githubLink}`} target="_blank" rel="noopener noreferrer" className="hover:underline" style={{ color }}>
+                          GitHub
+                        </a>
+                      )}
+                      {proj.githubLink && proj.liveDemo && <span> · </span>}
+                      {proj.liveDemo && (
+                        <a href={proj.liveDemo.startsWith('http') ? proj.liveDemo : `https://${proj.liveDemo}`} target="_blank" rel="noopener noreferrer" className="hover:underline" style={{ color }}>
+                          Demo
+                        </a>
+                      )}
                     </div>
                   </div>
                   {proj.techStack?.length > 0 && (

@@ -34,9 +34,30 @@ export default function CreativeDesigner({ data }) {
             {p.email && <div className="flex items-start gap-1.5"><span>✉</span><span className="break-all">{p.email}</span></div>}
             {p.phone && <div className="flex items-center gap-1.5"><span>☎</span><span>{p.phone}</span></div>}
             {p.location && <div className="flex items-center gap-1.5"><span>📍</span><span>{p.location}</span></div>}
-            {p.linkedin && <div className="flex items-start gap-1.5"><span>in</span><span className="break-all opacity-80">{p.linkedin.replace('https://www.linkedin.com/in/', '').replace('https://linkedin.com/in/', '')}</span></div>}
-            {p.github && <div className="flex items-start gap-1.5"><span>⚡</span><span className="break-all opacity-80">{p.github.replace('https://github.com/', '')}</span></div>}
-            {p.portfolio && <div className="flex items-start gap-1.5"><span>🌐</span><span className="break-all opacity-80">{p.portfolio.replace('https://', '')}</span></div>}
+            {p.linkedin && (
+              <div className="flex items-start gap-1.5">
+                <span>in</span>
+                <a href={p.linkedin.startsWith('http') ? p.linkedin : `https://${p.linkedin}`} target="_blank" rel="noopener noreferrer" className="hover:underline break-all opacity-80 text-white">
+                  {p.linkedin.replace('https://www.linkedin.com/in/', '').replace('https://linkedin.com/in/', '')}
+                </a>
+              </div>
+            )}
+            {p.github && (
+              <div className="flex items-start gap-1.5">
+                <span>⚡</span>
+                <a href={p.github.startsWith('http') ? p.github : `https://${p.github}`} target="_blank" rel="noopener noreferrer" className="hover:underline break-all opacity-80 text-white">
+                  {p.github.replace('https://github.com/', '')}
+                </a>
+              </div>
+            )}
+            {p.portfolio && (
+              <div className="flex items-start gap-1.5">
+                <span>🌐</span>
+                <a href={p.portfolio.startsWith('http') ? p.portfolio : `https://${p.portfolio}`} target="_blank" rel="noopener noreferrer" className="hover:underline break-all opacity-80 text-white">
+                  {p.portfolio.replace('https://', '')}
+                </a>
+              </div>
+            )}
           </div>
         </div>
 
@@ -151,8 +172,17 @@ export default function CreativeDesigner({ data }) {
                   <div className="flex justify-between items-start">
                     <p className="text-[10pt] font-bold text-gray-900">{proj.name}</p>
                     <div className="text-[7.5pt]" style={{ color }}>
-                      {proj.githubLink && <span>GitHub </span>}
-                      {proj.liveDemo && <span>· Demo</span>}
+                      {proj.githubLink && (
+                        <a href={proj.githubLink.startsWith('http') ? proj.githubLink : `https://${proj.githubLink}`} target="_blank" rel="noopener noreferrer" className="hover:underline" style={{ color }}>
+                          GitHub
+                        </a>
+                      )}
+                      {proj.githubLink && proj.liveDemo && <span> · </span>}
+                      {proj.liveDemo && (
+                        <a href={proj.liveDemo.startsWith('http') ? proj.liveDemo : `https://${proj.liveDemo}`} target="_blank" rel="noopener noreferrer" className="hover:underline" style={{ color }}>
+                          Demo
+                        </a>
+                      )}
                     </div>
                   </div>
                   {proj.techStack?.length > 0 && (

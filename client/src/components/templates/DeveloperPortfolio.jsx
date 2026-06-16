@@ -22,9 +22,30 @@ export default function DeveloperPortfolio({ data }) {
             {p.email && <p>$ echo {p.email}</p>}
             {p.phone && <p>$ call {p.phone}</p>}
             {p.location && <p>$ locate {p.location}</p>}
-            {p.github && <p style={{ color }}>$ git: {p.github.replace('https://github.com/', '')}</p>}
-            {p.linkedin && <p>$ in: {p.linkedin.replace('https://www.linkedin.com/in/', '')}</p>}
-            {p.portfolio && <p style={{ color }}>$ web: {p.portfolio.replace('https://', '')}</p>}
+            {p.github && (
+              <p>
+                $ git:{' '}
+                <a href={p.github.startsWith('http') ? p.github : `https://${p.github}`} target="_blank" rel="noopener noreferrer" className="hover:underline" style={{ color }}>
+                  {p.github.replace('https://github.com/', '')}
+                </a>
+              </p>
+            )}
+            {p.linkedin && (
+              <p>
+                $ in:{' '}
+                <a href={p.linkedin.startsWith('http') ? p.linkedin : `https://${p.linkedin}`} target="_blank" rel="noopener noreferrer" className="hover:underline text-white">
+                  {p.linkedin.replace('https://www.linkedin.com/in/', '')}
+                </a>
+              </p>
+            )}
+            {p.portfolio && (
+              <p>
+                $ web:{' '}
+                <a href={p.portfolio.startsWith('http') ? p.portfolio : `https://${p.portfolio}`} target="_blank" rel="noopener noreferrer" className="hover:underline" style={{ color }}>
+                  {p.portfolio.replace('https://', '')}
+                </a>
+              </p>
+            )}
           </div>
         </div>
 
@@ -88,8 +109,17 @@ export default function DeveloperPortfolio({ data }) {
                   <div className="flex justify-between items-start mb-1">
                     <p className="font-bold text-gray-900">{proj.name}</p>
                     <div className="text-[8pt] text-gray-500">
-                      {proj.githubLink && <span>github </span>}
-                      {proj.liveDemo && <span style={{ color }}>· live</span>}
+                      {proj.githubLink && (
+                        <a href={proj.githubLink.startsWith('http') ? proj.githubLink : `https://${proj.githubLink}`} target="_blank" rel="noopener noreferrer" className="hover:underline">
+                          github
+                        </a>
+                      )}
+                      {proj.githubLink && proj.liveDemo && <span> · </span>}
+                      {proj.liveDemo && (
+                        <a href={proj.liveDemo.startsWith('http') ? proj.liveDemo : `https://${proj.liveDemo}`} target="_blank" rel="noopener noreferrer" className="hover:underline" style={{ color }}>
+                          live
+                        </a>
+                      )}
                     </div>
                   </div>
                   {proj.techStack?.length > 0 && (

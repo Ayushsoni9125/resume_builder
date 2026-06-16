@@ -27,9 +27,30 @@ export default function MinimalClean({ data }) {
           {p.email && <span>{p.email}</span>}
           {p.phone && <><span className="text-gray-300">|</span><span>{p.phone}</span></>}
           {p.location && <><span className="text-gray-300">|</span><span>{p.location}</span></>}
-          {p.linkedin && <><span className="text-gray-300">|</span><span>{p.linkedin.replace('https://', '')}</span></>}
-          {p.github && <><span className="text-gray-300">|</span><span>{p.github.replace('https://', '')}</span></>}
-          {p.portfolio && <><span className="text-gray-300">|</span><span>{p.portfolio.replace('https://', '')}</span></>}
+          {p.linkedin && (
+            <>
+              <span className="text-gray-300">|</span>
+              <a href={p.linkedin.startsWith('http') ? p.linkedin : `https://${p.linkedin}`} target="_blank" rel="noopener noreferrer" className="hover:underline" style={{ color }}>
+                {p.linkedin.replace('https://', '').replace('http://', '')}
+              </a>
+            </>
+          )}
+          {p.github && (
+            <>
+              <span className="text-gray-300">|</span>
+              <a href={p.github.startsWith('http') ? p.github : `https://${p.github}`} target="_blank" rel="noopener noreferrer" className="hover:underline" style={{ color }}>
+                {p.github.replace('https://', '').replace('http://', '')}
+              </a>
+            </>
+          )}
+          {p.portfolio && (
+            <>
+              <span className="text-gray-300">|</span>
+              <a href={p.portfolio.startsWith('http') ? p.portfolio : `https://${p.portfolio}`} target="_blank" rel="noopener noreferrer" className="hover:underline" style={{ color }}>
+                {p.portfolio.replace('https://', '').replace('http://', '')}
+              </a>
+            </>
+          )}
         </div>
       </div>
 
@@ -89,7 +110,19 @@ export default function MinimalClean({ data }) {
           {data.projects.map((proj, i) => (
             <div key={i} className="mb-3">
               <div className="flex justify-between items-baseline">
-                <span className="text-[10pt] font-bold text-gray-900">{proj.name}</span>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="text-[10pt] font-bold text-gray-900">{proj.name}</span>
+                  {proj.githubLink && (
+                    <a href={proj.githubLink.startsWith('http') ? proj.githubLink : `https://${proj.githubLink}`} target="_blank" rel="noopener noreferrer" className="text-[8pt] font-semibold hover:underline" style={{ color }}>
+                      [GitHub]
+                    </a>
+                  )}
+                  {proj.liveDemo && (
+                    <a href={proj.liveDemo.startsWith('http') ? proj.liveDemo : `https://${proj.liveDemo}`} target="_blank" rel="noopener noreferrer" className="text-[8pt] font-semibold hover:underline" style={{ color }}>
+                      [Demo]
+                    </a>
+                  )}
+                </div>
                 {proj.techStack?.length > 0 && (
                   <span className="text-[8pt] text-gray-500">{proj.techStack.join(', ')}</span>
                 )}
