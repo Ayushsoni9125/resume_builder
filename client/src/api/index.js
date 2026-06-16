@@ -33,7 +33,8 @@ export const aiAPI = {
   generateExperienceDesc: (data) => api.post('/ai/experience-description', data),
   importSocials: (data) => api.post('/ai/import-socials', data),
   parseResume: (text) => api.post('/ai/parse', { text }),
-  parseResumeFile: (formData) => api.post('/ai/parse-file', formData, { headers: { 'Content-Type': 'multipart/form-data' } }),
+  // Do NOT set Content-Type manually — axios auto-sets multipart/form-data WITH the required boundary when given FormData
+  parseResumeFile: (formData) => api.post('/ai/parse-file', formData),
   matchJobDescription: (resume, jobDescription) => api.post('/ai/job-match', { resume, jobDescription }),
   rewriteSection: (text, option) => api.post('/ai/rewrite', { text, option }),
   generateCoverLetter: (data) => api.post('/ai/generate-cover-letter', data),
