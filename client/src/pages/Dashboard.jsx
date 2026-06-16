@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Plus, FileText, Edit3, Trash2, Copy, Eye, Share2, MoreVertical,
-  Sparkles, LogOut, User, Clock, TrendingUp, Download, History, X, Check
+  Sparkles, LogOut, User, Clock, TrendingUp, Download, History, X, Check, Loader2
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import useAuthStore from '../store/authStore';
