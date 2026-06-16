@@ -7,11 +7,14 @@ const rateLimit = require('express-rate-limit');
 const path = require('path');
 
 const connectDB = require('./config/db');
-const authRoutes = require('./routes/auth');
-const resumeRoutes = require('./routes/resume');
-const aiRoutes = require('./routes/ai');
-const coverLetterRoutes = require('./routes/coverLetter');
 const sanitize = require('./middleware/sanitize');
+
+// Load routes with individual error catching so a single bad import doesn't silently kill other routes
+let authRoutes, resumeRoutes, aiRoutes, coverLetterRoutes;
+try { authRoutes = require('./routes/auth'); console.log('✅ Auth routes loaded'); } catch(e) { console.error('❌ Auth routes failed:', e.message); }
+try { resumeRoutes = require('./routes/resume'); console.log('✅ Resume routes loaded'); } catch(e) { console.error('❌ Resume routes failed:', e.message); }
+try { aiRoutes = require('./routes/ai'); console.log('✅ AI routes loaded'); } catch(e) { console.error('❌ AI routes failed:', e.message); }
+try { coverLetterRoutes = require('./routes/coverLetter'); console.log('✅ CoverLetter routes loaded'); } catch(e) { console.error('❌ CoverLetter routes failed:', e.message); }
 
 const app = express();
 
@@ -75,11 +78,18 @@ app.use(sanitize);
 // Static files (profile photos)
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
-// Routes
-app.use('/api/auth', authRoutes);
-app.use('/api/resumes', resumeRoutes);
-app.use('/api/ai', aiRoutes);
-app.use('/api/cover-letters', coverLetterRoutes);
+// Routes — only mount if successfully imported
+if (authRoutes) app.use('/api/auth', authRoutes);
+if (resumeRoutes) app.use('/api/resumes', resumeRoutes);
+if (aiRoutes) app.use('/api/ai', aiRoutes);
+if (coverLetterRoutes) app.use('/api/cover-letters', coverLetterRoutes);
+
+console.log('📡 Routes mounted:', [
+  authRoutes ? '/api/auth' : null,
+  resumeRoutes ? '/api/resumes' : null,
+  aiRoutes ? '/api/ai' : null,
+  coverLetterRoutes ? '/api/cover-letters' : null
+].filter(Boolean).join(', '));
 
 // Health check
 app.get('/api/health', (req, res) => {
