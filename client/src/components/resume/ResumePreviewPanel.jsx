@@ -29,7 +29,7 @@ export default function ResumePreviewPanel() {
   }, []);
 
   return (
-    <div ref={containerRef} className="w-full overflow-hidden rounded-xl bg-dark-950 flex flex-col items-start">
+    <div ref={containerRef} className="w-full overflow-hidden rounded-xl bg-dark-100 border border-dark-200/60 p-2 flex flex-col items-start">
       <div
         className="shadow-card bg-white"
         style={{

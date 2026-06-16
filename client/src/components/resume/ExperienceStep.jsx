@@ -28,12 +28,12 @@ function ExperienceCard({ exp, index, onUpdate, onRemove }) {
   };
 
   return (
-    <div className="border border-white/10 rounded-xl overflow-hidden">
-      <div className="flex items-center justify-between px-4 py-3 bg-dark-800/50 cursor-pointer hover:bg-dark-800 transition-colors"
+    <div className="border border-dark-200 rounded-xl overflow-hidden">
+      <div className="flex items-center justify-between px-4 py-3 bg-dark-100 cursor-pointer hover:bg-dark-200 transition-colors"
         onClick={() => setOpen(!open)}>
         <div className="flex items-center gap-2">
           <Briefcase className="w-4 h-4 text-primary-400" />
-          <span className="text-sm font-medium text-white">
+          <span className="text-sm font-medium text-dark-900">
             {exp.role || 'New Experience'} {exp.company ? `@ ${exp.company}` : ''}
           </span>
           {exp.current && <span className="badge-success text-xs">Current</span>}
@@ -73,7 +73,7 @@ function ExperienceCard({ exp, index, onUpdate, onRemove }) {
             <input type="checkbox" id={`exp-current-${index}`} checked={exp.current}
               onChange={e => { onUpdate('current', e.target.checked); if (e.target.checked) onUpdate('endDate', 'Present'); }}
               className="w-4 h-4 rounded accent-primary-500" />
-            <label htmlFor={`exp-current-${index}`} className="text-sm text-dark-300">I currently work here</label>
+            <label htmlFor={`exp-current-${index}`} className="text-sm text-dark-600">I currently work here</label>
           </div>
           <div>
             <label className="input-label">Location</label>

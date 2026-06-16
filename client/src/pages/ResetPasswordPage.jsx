@@ -28,19 +28,19 @@ export default function ResetPasswordPage() {
   };
 
   return (
-    <div className="min-h-screen bg-dark-950 bg-mesh flex items-center justify-center p-4">
+    <div className="min-h-screen bg-dark-100 bg-mesh flex items-center justify-center p-4">
       <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-md">
         <div className="text-center mb-8">
           <Link to="/" className="inline-flex items-center gap-2 mb-6">
             <div className="w-10 h-10 rounded-xl bg-gradient-primary flex items-center justify-center shadow-glow">
               <Sparkles className="w-5 h-5 text-white" />
             </div>
-            <span className="font-display font-bold text-xl text-white">ResumeAI</span>
+            <span className="font-display font-bold text-xl text-dark-900">ResumeAI</span>
           </Link>
-          <h1 className="text-3xl font-display font-bold text-white mb-2">Set New Password</h1>
-          <p className="text-dark-400">Choose a strong password for your account</p>
+          <h1 className="text-3xl font-display font-bold text-dark-900 mb-2">Set New Password</h1>
+          <p className="text-dark-600">Choose a strong password for your account</p>
         </div>
-        <div className="card border border-white/10">
+        <div className="card border border-dark-200/80">
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
             <div>
               <label className="input-label">New Password</label>
@@ -52,7 +52,7 @@ export default function ResetPasswordPage() {
                   className="input-field pl-10 pr-10" id="reset-password"
                 />
                 <button type="button" onClick={() => setShowPw(!showPw)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-dark-400 hover:text-white transition-colors">
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-dark-400 hover:text-dark-900 transition-colors">
                   {showPw ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>

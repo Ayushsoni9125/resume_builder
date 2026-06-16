@@ -8,14 +8,14 @@ function EducationCard({ edu, index, onUpdate, onRemove }) {
   const [open, setOpen] = useState(true);
 
   return (
-    <div className="border border-white/10 rounded-xl overflow-hidden">
+    <div className="border border-dark-200 rounded-xl overflow-hidden">
       <div
-        className="flex items-center justify-between px-4 py-3 bg-dark-800/50 cursor-pointer hover:bg-dark-800 transition-colors"
+        className="flex items-center justify-between px-4 py-3 bg-dark-100 cursor-pointer hover:bg-dark-200 transition-colors"
         onClick={() => setOpen(!open)}
       >
         <div className="flex items-center gap-2">
           <GraduationCap className="w-4 h-4 text-primary-400" />
-          <span className="text-sm font-medium text-white">
+          <span className="text-sm font-medium text-dark-900">
             {edu.degree || 'New Education'} {edu.institution ? `— ${edu.institution}` : ''}
           </span>
         </div>

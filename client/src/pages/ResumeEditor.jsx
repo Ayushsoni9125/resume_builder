@@ -94,21 +94,21 @@ export default function ResumeEditor() {
   const CurrentStep = stepComponents[activeStep];
 
   return (
-    <div className="min-h-screen bg-dark-950 flex flex-col">
+    <div className="min-h-screen bg-dark-100 flex flex-col">
       {/* Top bar */}
-      <header className="sticky top-0 z-30 border-b border-white/5 bg-dark-950/90 backdrop-blur-sm">
+      <header className="sticky top-0 z-30 border-b border-dark-200 bg-white/95 backdrop-blur-sm">
         <div className="flex items-center justify-between px-4 py-3 max-w-screen-2xl mx-auto">
           <div className="flex items-center gap-3">
             <Link to="/dashboard" className="btn-ghost p-2">
               <ArrowLeft className="w-4 h-4" />
             </Link>
             <div>
-              <h1 className="font-semibold text-white text-sm">
+              <h1 className="font-semibold text-dark-900 text-sm">
                 {currentResume.title || 'Untitled Resume'}
               </h1>
-              {isDirty && <span className="text-xs text-yellow-400">Unsaved changes</span>}
+              {isDirty && <span className="text-xs text-yellow-500 font-medium">Unsaved changes</span>}
               {!isDirty && isSaving === false && resumeId && (
-                <span className="text-xs text-green-400">All changes saved</span>
+                <span className="text-xs text-green-600 font-medium">All changes saved</span>
               )}
             </div>
           </div>
@@ -128,7 +128,7 @@ export default function ResumeEditor() {
         </div>
 
         {/* Step progress bar */}
-        <div className="w-full h-0.5 bg-dark-800">
+        <div className="w-full h-0.5 bg-dark-200">
           <div
             className="h-full bg-gradient-primary transition-all duration-500"
             style={{ width: `${((activeStep + 1) / STEPS.length) * 100}%` }}
@@ -138,20 +138,20 @@ export default function ResumeEditor() {
 
       <div className="flex flex-1 max-w-screen-2xl mx-auto w-full">
         {/* Left sidebar steps */}
-        <aside className="hidden lg:flex flex-col w-56 shrink-0 border-r border-white/5 py-6 px-3 gap-1">
+        <aside className="hidden lg:flex flex-col w-56 shrink-0 border-r border-dark-200 py-6 px-3 gap-1">
           {STEPS.map((step, i) => (
             <button
               key={step.id}
               onClick={() => setActiveStep(i)}
               className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 text-left
-                ${i === activeStep ? 'bg-primary-500/15 text-primary-300 border border-primary-500/25' :
-                  i < activeStep ? 'text-green-400 hover:bg-white/5' : 'text-dark-400 hover:bg-white/5 hover:text-white'}`}
+                ${i === activeStep ? 'bg-primary-500/10 text-primary-600 border border-primary-500/20' :
+                  i < activeStep ? 'text-green-600 hover:bg-dark-200/50' : 'text-dark-600 hover:bg-dark-200/50 hover:text-dark-900'}`}
             >
               <span className="w-5 h-5 shrink-0 flex items-center justify-center">
                 {i < activeStep
-                  ? <CheckCircle2 className="w-4 h-4 text-green-400" />
+                  ? <CheckCircle2 className="w-4 h-4 text-green-600" />
                   : <span className={`w-4 h-4 rounded-full border flex items-center justify-center text-xs
-                      ${i === activeStep ? 'border-primary-400 bg-primary-500/20 text-primary-400' : 'border-dark-500 text-dark-500'}`}>
+                      ${i === activeStep ? 'border-primary-500 bg-primary-500/10 text-primary-600' : 'border-dark-300 text-dark-500'}`}>
                       {i + 1}
                     </span>
                 }
@@ -166,16 +166,16 @@ export default function ResumeEditor() {
           <div className="max-w-2xl mx-auto px-4 py-8">
             {/* View Mode Toggle for Mobile/Tablet (< xl) */}
             <div className="flex xl:hidden justify-center mb-6">
-              <div className="bg-dark-900 border border-white/5 p-1 rounded-xl flex gap-1">
+              <div className="bg-dark-200 border border-dark-300 p-1 rounded-xl flex gap-1">
                 <button
                   onClick={() => setViewMode('edit')}
-                  className={`px-4 py-1.5 rounded-lg text-xs font-semibold transition-all ${viewMode === 'edit' ? 'bg-primary-500 text-white shadow-glow' : 'text-dark-400 hover:text-white'}`}
+                  className={`px-4 py-1.5 rounded-lg text-xs font-semibold transition-all ${viewMode === 'edit' ? 'bg-primary-500 text-white shadow-glow' : 'text-dark-600 hover:text-dark-900'}`}
                 >
                   Edit Form
                 </button>
                 <button
                   onClick={() => setViewMode('preview')}
-                  className={`px-4 py-1.5 rounded-lg text-xs font-semibold transition-all ${viewMode === 'preview' ? 'bg-primary-500 text-white shadow-glow' : 'text-dark-400 hover:text-white'}`}
+                  className={`px-4 py-1.5 rounded-lg text-xs font-semibold transition-all ${viewMode === 'preview' ? 'bg-primary-500 text-white shadow-glow' : 'text-dark-600 hover:text-dark-900'}`}
                 >
                   Live Preview
                 </button>
@@ -189,7 +189,7 @@ export default function ResumeEditor() {
                   <button key={step.id} onClick={() => setActiveStep(i)}
                     className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-medium transition-all
                       ${i === activeStep ? 'bg-primary-500 text-white' :
-                        i < activeStep ? 'bg-green-500/20 text-green-400' : 'bg-dark-800 text-dark-400'}`}>
+                        i < activeStep ? 'bg-green-500/10 text-green-600' : 'bg-dark-200 text-dark-500'}`}>
                     {step.shortLabel}
                   </button>
                 ))}
@@ -215,14 +215,14 @@ export default function ResumeEditor() {
             {viewMode === 'preview' && (
               <div className="xl:hidden block space-y-4">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-medium text-dark-400 uppercase tracking-wider">Live Preview</span>
+                  <span className="text-xs font-medium text-dark-500 uppercase tracking-wider">Live Preview</span>
                   {resumeId && (
                     <Link to={`/resume/${resumeId}/preview`} className="btn-primary py-1.5 px-3 text-xs">
                       Full Preview & PDF
                     </Link>
                   )}
                 </div>
-                <div className="bg-dark-900 border border-white/5 rounded-2xl p-4 flex justify-center overflow-x-auto no-scrollbar">
+                <div className="bg-white border border-dark-200 rounded-2xl p-4 flex justify-center overflow-x-auto no-scrollbar">
                   <ResumePreviewPanel />
                 </div>
               </div>
@@ -230,7 +230,7 @@ export default function ResumeEditor() {
 
             {/* Navigation buttons */}
             {viewMode === 'edit' && (
-              <div className="flex items-center justify-between mt-8 pt-6 border-t border-white/5">
+              <div className="flex items-center justify-between mt-8 pt-6 border-t border-dark-200">
                 <button onClick={handleBack} disabled={activeStep === 0}
                   className="btn-secondary" id="step-back-btn">
                   Back
@@ -251,9 +251,9 @@ export default function ResumeEditor() {
         </main>
 
         {/* Right live preview panel */}
-        <aside className="hidden xl:block w-[420px] shrink-0 border-l border-white/5 overflow-y-auto">
-          <div className="sticky top-0 p-3 border-b border-white/5 flex items-center justify-between">
-            <span className="text-xs font-medium text-dark-400 uppercase tracking-wider">Live Preview</span>
+        <aside className="hidden xl:block w-[420px] shrink-0 border-l border-dark-200 overflow-y-auto">
+          <div className="sticky top-0 p-3 border-b border-dark-200 flex items-center justify-between">
+            <span className="text-xs font-medium text-dark-500 uppercase tracking-wider">Live Preview</span>
             {resumeId && (
               <Link to={`/resume/${resumeId}/preview`} className="btn-ghost py-1 px-2 text-xs">
                 Full Preview

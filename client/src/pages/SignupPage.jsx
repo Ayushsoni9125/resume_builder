@@ -21,7 +21,7 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="min-h-screen bg-dark-950 bg-mesh flex items-center justify-center p-4">
+    <div className="min-h-screen bg-dark-100 bg-mesh flex items-center justify-center p-4">
       <motion.div
         initial={{ opacity: 0, y: 24 }}
         animate={{ opacity: 1, y: 0 }}
@@ -33,22 +33,22 @@ export default function SignupPage() {
             <div className="w-10 h-10 rounded-xl bg-gradient-primary flex items-center justify-center shadow-glow">
               <Sparkles className="w-5 h-5 text-white" />
             </div>
-            <span className="font-display font-bold text-xl text-white">ResumeAI</span>
+            <span className="font-display font-bold text-xl text-dark-900">ResumeAI</span>
           </Link>
-          <h1 className="text-3xl font-display font-bold text-white mb-2">Create your account</h1>
-          <p className="text-dark-400">Start building beautiful resumes for free</p>
+          <h1 className="text-3xl font-display font-bold text-dark-900 mb-2">Create your account</h1>
+          <p className="text-dark-600">Start building beautiful resumes for free</p>
         </div>
 
         {/* Perks */}
         <div className="flex flex-wrap gap-2 justify-center mb-6">
           {perks.map(perk => (
-            <span key={perk} className="flex items-center gap-1 text-xs text-dark-300 bg-white/5 px-3 py-1 rounded-full border border-white/10">
-              <CheckCircle className="w-3 h-3 text-primary-400" /> {perk}
+            <span key={perk} className="flex items-center gap-1 text-xs text-dark-700 bg-white px-3 py-1 rounded-full border border-dark-200">
+              <CheckCircle className="w-3 h-3 text-primary-600" /> {perk}
             </span>
           ))}
         </div>
 
-        <div className="card border border-white/10">
+        <div className="card border border-dark-200/80">
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
             <div>
               <label className="input-label">Full Name</label>
@@ -92,7 +92,7 @@ export default function SignupPage() {
                   className="input-field pl-10 pr-10" id="signup-password"
                 />
                 <button type="button" onClick={() => setShowPw(!showPw)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-dark-400 hover:text-white transition-colors">
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-dark-400 hover:text-dark-900 transition-colors">
                   {showPw ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
@@ -135,16 +135,16 @@ export default function SignupPage() {
           </form>
 
           <div className="divider" />
-          <p className="text-center text-sm text-dark-400">
+          <p className="text-center text-sm text-dark-600">
             Already have an account?{' '}
-            <Link to="/login" className="text-primary-400 hover:text-primary-300 font-medium transition-colors">
+            <Link to="/login" className="text-primary-600 hover:text-primary-500 font-medium transition-colors font-semibold">
               Sign in
             </Link>
           </p>
         </div>
 
-        <div className="fixed top-20 right-10 w-64 h-64 bg-primary-500/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="fixed bottom-20 left-10 w-48 h-48 bg-purple-500/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="fixed top-20 right-10 w-64 h-64 bg-primary-500/5 rounded-full blur-3xl pointer-events-none" />
+        <div className="fixed bottom-20 left-10 w-48 h-48 bg-primary-500/5 rounded-full blur-3xl pointer-events-none" />
       </motion.div>
     </div>
   );

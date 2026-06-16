@@ -21,7 +21,7 @@ function SkillTag({ skill, onRemove }) {
   return (
     <span className="badge-primary flex items-center gap-1.5 text-sm py-1 px-3">
       {skill}
-      <button type="button" onClick={onRemove} className="hover:text-white transition-colors">
+      <button type="button" onClick={onRemove} className="hover:text-primary-800 transition-colors">
         <X className="w-3 h-3" />
       </button>
     </span>
@@ -55,14 +55,14 @@ function SkillInput({ label, skills, onAdd, onRemove, popularSkills, inputId }) 
             }
           }}
           placeholder={skills.length === 0 ? 'Type and press Enter...' : ''}
-          className="flex-1 min-w-[120px] bg-transparent text-white text-sm outline-none placeholder-dark-400"
+          className="flex-1 min-w-[120px] bg-transparent text-dark-900 text-sm outline-none placeholder-dark-400"
           id={inputId}
         />
       </div>
       <div className="flex flex-wrap gap-1.5">
         {popularSkills.filter(s => !skills.includes(s)).slice(0, 12).map(s => (
           <button key={s} type="button" onClick={() => handleAdd(s)}
-            className="text-xs px-2.5 py-1 rounded-full border border-dark-600 text-dark-400 hover:border-primary-500/50 hover:text-primary-300 hover:bg-primary-500/10 transition-all">
+            className="text-xs px-2.5 py-1 rounded-full border border-dark-300 text-dark-600 hover:border-primary-500/50 hover:text-primary-600 hover:bg-primary-500/5 transition-all">
             + {s}
           </button>
         ))}
@@ -137,8 +137,8 @@ export default function SkillsStep() {
       </div>
 
       <div className="p-4 rounded-xl bg-primary-500/5 border border-primary-500/20">
-        <p className="text-xs text-primary-300 font-medium mb-1">💡 ATS Tip</p>
-        <p className="text-xs text-dark-400">Include <strong className="text-dark-300">10–15 technical skills</strong> for best ATS performance. Mirror keywords from the job description.</p>
+        <p className="text-xs text-primary-600 font-medium mb-1">💡 ATS Tip</p>
+        <p className="text-xs text-dark-600">Include <strong className="text-dark-800">10–15 technical skills</strong> for best ATS performance. Mirror keywords from the job description.</p>
       </div>
     </div>
   );

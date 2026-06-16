@@ -61,10 +61,10 @@ export default function SummaryStep() {
             id="summary-textarea"
           />
           {generating && (
-            <div className="absolute inset-0 bg-dark-800/80 rounded-xl flex items-center justify-center">
+            <div className="absolute inset-0 bg-white/80 rounded-xl flex items-center justify-center">
               <div className="text-center">
-                <Sparkles className="w-8 h-8 text-primary-400 animate-pulse mx-auto mb-2" />
-                <p className="text-sm text-primary-300">AI is crafting your summary...</p>
+                <Sparkles className="w-8 h-8 text-primary-500 animate-pulse mx-auto mb-2" />
+                <p className="text-sm text-primary-600 font-semibold">AI is crafting your summary...</p>
               </div>
             </div>
           )}
@@ -76,9 +76,9 @@ export default function SummaryStep() {
         </div>
 
         <div className="mt-4 p-4 rounded-xl bg-primary-500/5 border border-primary-500/20">
-          <p className="text-xs text-primary-300 font-medium mb-1">💡 AI Tip</p>
-          <p className="text-xs text-dark-400">
-            Fill in your <strong className="text-dark-300">Skills</strong> and <strong className="text-dark-300">Experience</strong> sections first for better AI-generated summaries.
+          <p className="text-xs text-primary-600 font-medium mb-1">💡 AI Tip</p>
+          <p className="text-xs text-dark-600">
+            Fill in your <strong className="text-dark-800">Skills</strong> and <strong className="text-dark-800">Experience</strong> sections first for better AI-generated summaries.
           </p>
         </div>
       </div>

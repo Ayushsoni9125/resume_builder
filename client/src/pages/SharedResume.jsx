@@ -33,25 +33,25 @@ export default function SharedResume() {
   }, []);
 
   if (loading) return (
-    <div className="min-h-screen bg-dark-950 flex items-center justify-center">
+    <div className="min-h-screen bg-dark-100 flex items-center justify-center">
       <Loader2 className="w-8 h-8 text-primary-500 animate-spin" />
     </div>
   );
 
   if (error) return (
-    <div className="min-h-screen bg-dark-950 flex flex-col items-center justify-center gap-4 p-4">
-      <div className="w-16 h-16 rounded-2xl bg-dark-800 flex items-center justify-center">
-        <Sparkles className="w-8 h-8 text-dark-400" />
+    <div className="min-h-screen bg-dark-100 flex flex-col items-center justify-center gap-4 p-4">
+      <div className="w-16 h-16 rounded-2xl bg-dark-200 flex items-center justify-center">
+        <Sparkles className="w-8 h-8 text-dark-600" />
       </div>
-      <p className="text-dark-400 text-center max-w-sm">{error}</p>
+      <p className="text-dark-600 text-center max-w-sm">{error}</p>
     </div>
   );
 
   return (
-    <div className="min-h-screen bg-dark-950 flex flex-col items-center py-8 px-4 overflow-hidden">
-      <div className="flex items-center gap-2 mb-6 text-dark-400 text-sm">
-        <Sparkles className="w-4 h-4 text-primary-400" />
-        <span>Shared via <strong className="text-primary-400">ResumeAI</strong></span>
+    <div className="min-h-screen bg-dark-100 flex flex-col items-center py-8 px-4 overflow-hidden">
+      <div className="flex items-center gap-2 mb-6 text-dark-600 text-sm">
+        <Sparkles className="w-4 h-4 text-primary-500" />
+        <span>Shared via <strong className="text-primary-600">ResumeAI</strong></span>
       </div>
       <div
         style={{

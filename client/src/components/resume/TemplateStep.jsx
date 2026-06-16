@@ -66,9 +66,9 @@ export default function TemplateStep() {
             transition={{ delay: i * 0.07 }}
             onClick={() => setTemplate(tpl.id)}
             className={`relative text-left rounded-2xl border-2 overflow-hidden transition-all duration-200
-              ${currentResume.template === tpl.id
-                ? 'border-primary-500 shadow-glow'
-                : 'border-white/10 hover:border-primary-500/40'}`}
+               ${currentResume.template === tpl.id
+                 ? 'border-primary-500 shadow-glow'
+                 : 'border-dark-200 hover:border-primary-500/40'}`}
             id={`template-${tpl.id}`}
           >
             {/* Preview strip */}
@@ -87,14 +87,14 @@ export default function TemplateStep() {
 
             <div className="p-4">
               <div className="flex items-center justify-between mb-1">
-                <h3 className="font-semibold text-white text-sm">{tpl.name}</h3>
+                <h3 className="font-semibold text-dark-900 text-sm">{tpl.name}</h3>
                 {currentResume.template === tpl.id && (
                   <div className="w-5 h-5 rounded-full bg-primary-500 flex items-center justify-center">
                     <Check className="w-3 h-3 text-white" />
                   </div>
                 )}
               </div>
-              <p className="text-xs text-dark-400">{tpl.desc}</p>
+              <p className="text-xs text-dark-600">{tpl.desc}</p>
             </div>
           </motion.button>
         ))}
@@ -104,7 +104,7 @@ export default function TemplateStep() {
       <div className="form-section">
         <div className="flex items-center gap-2 mb-4">
           <Palette className="w-4 h-4 text-primary-400" />
-          <h3 className="font-semibold text-white">Accent Color</h3>
+          <h3 className="font-semibold text-dark-900">Accent Color</h3>
         </div>
         <div className="flex flex-wrap gap-3">
           {COLORS.map(color => (
@@ -113,7 +113,7 @@ export default function TemplateStep() {
               type="button"
               onClick={() => setThemeColor(color)}
               className={`w-9 h-9 rounded-xl border-2 transition-all duration-200 hover:scale-110
-                ${currentResume.themeColor === color ? 'border-white scale-110' : 'border-transparent'}`}
+                ${currentResume.themeColor === color ? 'border-dark-900 scale-110' : 'border-transparent'}`}
               style={{ backgroundColor: color }}
               title={color}
               id={`color-${color.replace('#', '')}`}
@@ -124,10 +124,10 @@ export default function TemplateStep() {
               type="color"
               value={currentResume.themeColor || '#6C47FF'}
               onChange={e => setThemeColor(e.target.value)}
-              className="w-9 h-9 rounded-xl cursor-pointer border-2 border-white/20"
+              className="w-9 h-9 rounded-xl cursor-pointer border-2 border-dark-300"
               title="Custom color"
             />
-            <span className="text-xs text-dark-400">Custom</span>
+            <span className="text-xs text-dark-600">Custom</span>
           </div>
         </div>
       </div>

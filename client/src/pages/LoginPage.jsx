@@ -17,7 +17,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-dark-950 bg-mesh flex items-center justify-center p-4">
+    <div className="min-h-screen bg-dark-100 bg-mesh flex items-center justify-center p-4">
       <motion.div
         initial={{ opacity: 0, y: 24 }}
         animate={{ opacity: 1, y: 0 }}
@@ -30,14 +30,14 @@ export default function LoginPage() {
             <div className="w-10 h-10 rounded-xl bg-gradient-primary flex items-center justify-center shadow-glow">
               <Sparkles className="w-5 h-5 text-white" />
             </div>
-            <span className="font-display font-bold text-xl text-white">ResumeAI</span>
+            <span className="font-display font-bold text-xl text-dark-900">ResumeAI</span>
           </Link>
-          <h1 className="text-3xl font-display font-bold text-white mb-2">Welcome back</h1>
-          <p className="text-dark-400">Sign in to continue building your career</p>
+          <h1 className="text-3xl font-display font-bold text-dark-900 mb-2">Welcome back</h1>
+          <p className="text-dark-600">Sign in to continue building your career</p>
         </div>
 
         {/* Form Card */}
-        <div className="card border border-white/10">
+        <div className="card border border-dark-200/80">
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
             {/* Email */}
             <div>
@@ -62,7 +62,7 @@ export default function LoginPage() {
             <div>
               <div className="flex justify-between items-center mb-1.5">
                 <label className="input-label mb-0">Password</label>
-                <Link to="/forgot-password" className="text-xs text-primary-400 hover:text-primary-300 transition-colors">
+                <Link to="/forgot-password" className="text-xs text-primary-600 hover:text-primary-500 transition-colors">
                   Forgot password?
                 </Link>
               </div>
@@ -76,7 +76,7 @@ export default function LoginPage() {
                   id="login-password"
                 />
                 <button type="button" onClick={() => setShowPw(!showPw)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-dark-400 hover:text-white transition-colors">
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-dark-400 hover:text-dark-900 transition-colors">
                   {showPw ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
@@ -99,17 +99,17 @@ export default function LoginPage() {
           </form>
 
           <div className="divider" />
-          <p className="text-center text-sm text-dark-400">
+          <p className="text-center text-sm text-dark-600">
             Don't have an account?{' '}
-            <Link to="/signup" className="text-primary-400 hover:text-primary-300 font-medium transition-colors">
+            <Link to="/signup" className="text-primary-600 hover:text-primary-500 font-medium transition-colors font-semibold">
               Create one free
             </Link>
           </p>
         </div>
 
         {/* Floating orbs */}
-        <div className="fixed top-20 left-10 w-64 h-64 bg-primary-500/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="fixed bottom-20 right-10 w-48 h-48 bg-purple-500/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="fixed top-20 left-10 w-64 h-64 bg-primary-500/5 rounded-full blur-3xl pointer-events-none" />
+        <div className="fixed bottom-20 right-10 w-48 h-48 bg-primary-500/5 rounded-full blur-3xl pointer-events-none" />
       </motion.div>
     </div>
   );

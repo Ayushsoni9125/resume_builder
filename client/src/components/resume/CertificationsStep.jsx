@@ -28,11 +28,11 @@ export default function CertificationsStep() {
 
         <div className="space-y-3">
           {certifications.map((cert, i) => (
-            <div key={i} className="card border border-white/10 p-4">
+            <div key={i} className="card border border-dark-200 p-4">
               <div className="flex items-start justify-between mb-3">
                 <div className="flex items-center gap-2">
                   <Award className="w-4 h-4 text-primary-400" />
-                  <span className="text-sm font-medium text-white">{cert.name || `Certification ${i + 1}`}</span>
+                  <span className="text-sm font-medium text-dark-900">{cert.name || `Certification ${i + 1}`}</span>
                 </div>
                 <button type="button" onClick={() => removeItem('certifications', i)}
                   className="p-1 hover:text-red-400 text-dark-500 transition-colors">
@@ -84,7 +84,7 @@ export default function CertificationsStep() {
           {achievements.map((ach, i) => (
             <div key={i} className="flex items-center gap-2">
               <div className="w-1.5 h-1.5 rounded-full bg-primary-400 shrink-0" />
-              <span className="flex-1 text-sm text-white">{ach}</span>
+              <span className="flex-1 text-sm text-dark-900">{ach}</span>
               <button type="button" onClick={() => {
                 const updated = achievements.filter((_, idx) => idx !== i);
                 updateSection('achievements', updated);

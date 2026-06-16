@@ -43,12 +43,12 @@ function ProjectCard({ project, index, onUpdate, onRemove }) {
   const removeTech = (tech) => onUpdate('techStack', project.techStack.filter(t => t !== tech));
 
   return (
-    <div className="border border-white/10 rounded-xl overflow-hidden">
-      <div className="flex items-center justify-between px-4 py-3 bg-dark-800/50 cursor-pointer hover:bg-dark-800 transition-colors"
+    <div className="border border-dark-200 rounded-xl overflow-hidden">
+      <div className="flex items-center justify-between px-4 py-3 bg-dark-100 cursor-pointer hover:bg-dark-200 transition-colors"
         onClick={() => setOpen(!open)}>
         <div className="flex items-center gap-2">
           <Code2 className="w-4 h-4 text-primary-400" />
-          <span className="text-sm font-medium text-white">{project.name || 'New Project'}</span>
+          <span className="text-sm font-medium text-dark-900">{project.name || 'New Project'}</span>
         </div>
         <div className="flex items-center gap-2">
           <button type="button" onClick={(e) => { e.stopPropagation(); onRemove(); }}
@@ -72,13 +72,13 @@ function ProjectCard({ project, index, onUpdate, onRemove }) {
             <div className="input-field min-h-[48px] flex flex-wrap gap-1.5 cursor-text" onClick={(e) => e.currentTarget.querySelector('input')?.focus()}>
               {project.techStack.map(tech => (
                 <span key={tech} className="badge-primary flex items-center gap-1">
-                  {tech}
-                  <button type="button" onClick={() => removeTech(tech)} className="hover:text-white"><X className="w-2.5 h-2.5" /></button>
+                   {tech}
+                  <button type="button" onClick={() => removeTech(tech)} className="hover:text-primary-800"><X className="w-2.5 h-2.5" /></button>
                 </span>
               ))}
               <input value={techInput} onChange={e => setTechInput(e.target.value)} onKeyDown={addTech}
                 placeholder={project.techStack.length === 0 ? 'Type and press Enter...' : ''}
-                className="flex-1 min-w-[100px] bg-transparent text-white text-sm outline-none placeholder-dark-400"
+                className="flex-1 min-w-[100px] bg-transparent text-dark-900 text-sm outline-none placeholder-dark-400"
                 id={`proj-tech-${index}`} />
             </div>
             <p className="text-xs text-dark-500 mt-1">Press Enter or comma to add each technology</p>

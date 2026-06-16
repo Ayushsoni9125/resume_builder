@@ -32,7 +32,7 @@ export default function ResumePreview() {
   }, [id]);
 
   const handlePrint = useReactToPrint({
-    content: () => printRef.current,
+    contentRef: printRef,
     documentTitle: currentResume?.title || 'Resume',
     onAfterPrint: () => toast.success('PDF downloaded!'),
   });
@@ -99,31 +99,31 @@ export default function ResumePreview() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-dark-950 flex items-center justify-center">
+      <div className="min-h-screen bg-dark-100 flex items-center justify-center">
         <Loader2 className="w-8 h-8 text-primary-500 animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className={`min-h-screen bg-dark-950 ${fullscreen ? 'fixed inset-0 z-50' : ''}`}>
+    <div className={`min-h-screen bg-dark-100 ${fullscreen ? 'fixed inset-0 z-50' : ''}`}>
       {/* Top bar */}
-      <div className="no-print sticky top-0 z-20 bg-dark-900/90 backdrop-blur-sm border-b border-white/5 px-4 py-3">
+      <div className="no-print sticky top-0 z-20 bg-white/90 backdrop-blur-sm border-b border-dark-200 px-4 py-3">
         <div className="max-w-screen-xl mx-auto flex items-center justify-between gap-3">
           <div className="flex items-center gap-2">
             <Link to={`/resume/${id}/edit`} className="btn-ghost p-2">
               <ArrowLeft className="w-4 h-4" />
             </Link>
-            <h1 className="font-semibold text-white text-sm hidden sm:block">{currentResume?.title}</h1>
+            <h1 className="font-semibold text-dark-900 text-sm hidden sm:block">{currentResume?.title}</h1>
           </div>
 
           <div className="flex items-center gap-1.5 flex-wrap justify-end">
             {/* Zoom */}
-            <div className="hidden sm:flex items-center gap-1 bg-dark-800 rounded-lg px-2 py-1">
+            <div className="hidden sm:flex items-center gap-1 bg-dark-200 rounded-lg px-2 py-1">
               <button onClick={() => setPreviewZoom(Math.max(0.4, zoom - 0.1))} className="btn-ghost p-1">
                 <ZoomOut className="w-3.5 h-3.5" />
               </button>
-              <span className="text-xs text-dark-300 w-10 text-center">{Math.round(zoom * 100)}%</span>
+              <span className="text-xs text-dark-600 w-10 text-center">{Math.round(zoom * 100)}%</span>
               <button onClick={() => setPreviewZoom(Math.min(1.2, zoom + 0.1))} className="btn-ghost p-1">
                 <ZoomIn className="w-3.5 h-3.5" />
               </button>
@@ -178,13 +178,13 @@ export default function ResumePreview() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 20 }}
-              className="no-print w-full lg:w-[340px] shrink-0 border-t lg:border-t-0 lg:border-l border-white/5 bg-dark-900 overflow-y-auto lg:h-[calc(100vh-60px)] lg:sticky lg:top-[60px]"
+              className="no-print w-full lg:w-[340px] shrink-0 border-t lg:border-t-0 lg:border-l border-dark-200 bg-white overflow-y-auto lg:h-[calc(100vh-60px)] lg:sticky lg:top-[60px]"
             >
               <div className="p-5 space-y-5">
                 {/* ATS Score */}
                 {showATS && (
                   <div>
-                    <h3 className="font-semibold text-white mb-4 flex items-center gap-2">
+                    <h3 className="font-semibold text-dark-900 mb-4 flex items-center gap-2">
                       <TrendingUp className="w-4 h-4 text-primary-400" /> ATS Score
                     </h3>
                     {atsLoading ? (
@@ -197,19 +197,19 @@ export default function ResumePreview() {
                           <div className="text-5xl font-display font-bold" style={{ color: ATSColor(atsData.score) }}>
                             {atsData.score}
                           </div>
-                          <div className="text-sm text-dark-400 mt-1">/ 100 · Grade: {atsData.grade}</div>
-                          <div className="text-xs text-dark-500 mt-2">{atsData.summary}</div>
+                          <div className="text-sm text-dark-600 mt-1">/ 100 · Grade: {atsData.grade}</div>
+                          <div className="text-xs text-dark-600 mt-2">{atsData.summary}</div>
                         </div>
 
                         {atsData.breakdown && (
                           <div className="space-y-2">
                             {Object.entries(atsData.breakdown).map(([key, val]) => (
                               <div key={key}>
-                                <div className="flex justify-between text-xs text-dark-400 mb-1">
+                                <div className="flex justify-between text-xs text-dark-600 mb-1">
                                   <span className="capitalize">{key.replace(/([A-Z])/g, ' $1')}</span>
                                   <span>{val}</span>
                                 </div>
-                                <div className="h-1.5 bg-dark-700 rounded-full">
+                                <div className="h-1.5 bg-dark-200 rounded-full">
                                   <div className="h-full rounded-full" style={{ width: `${val}%`, backgroundColor: ATSColor(atsData.score) }} />
                                 </div>
                               </div>
@@ -219,10 +219,10 @@ export default function ResumePreview() {
 
                         {atsData.suggestions?.length > 0 && (
                           <div>
-                            <p className="text-xs font-semibold text-white mb-2">Suggestions</p>
+                            <p className="text-xs font-semibold text-dark-900 mb-2">Suggestions</p>
                             <ul className="space-y-1.5">
                               {atsData.suggestions.map((s, i) => (
-                                <li key={i} className="text-xs text-dark-300 flex gap-2">
+                                <li key={i} className="text-xs text-dark-600 flex gap-2">
                                   <span className="text-primary-400 shrink-0">→</span> {s}
                                 </li>
                               ))}
@@ -237,13 +237,13 @@ export default function ResumePreview() {
                 {/* AI Improvements */}
                 {improvements && (
                   <div>
-                    <h3 className="font-semibold text-white mb-4 flex items-center gap-2">
+                    <h3 className="font-semibold text-dark-900 mb-4 flex items-center gap-2">
                       <Sparkles className="w-4 h-4 text-primary-400" /> AI Analysis
                     </h3>
                     <div className="space-y-3">
                       {improvements.overall && (
                         <div className="p-3 rounded-xl bg-primary-500/10 border border-primary-500/20">
-                          <p className="text-xs text-primary-300">{improvements.overall}</p>
+                          <p className="text-xs text-primary-800">{improvements.overall}</p>
                         </div>
                       )}
 
@@ -256,10 +256,10 @@ export default function ResumePreview() {
                             <span className={`badge text-xs ${item.priority === 'high' ? 'badge-danger' : item.priority === 'medium' ? 'badge-warning' : 'badge-success'}`}>
                               {item.priority}
                             </span>
-                            <span className="font-semibold text-white">{item.section}</span>
+                            <span className="font-semibold text-dark-900">{item.section}</span>
                           </div>
-                          <p className="text-dark-400 mb-1">{item.issue}</p>
-                          <p className="text-dark-300">→ {item.suggestion}</p>
+                          <p className="text-dark-600 mb-1">{item.issue}</p>
+                          <p className="text-dark-700">→ {item.suggestion}</p>
                         </div>
                       ))}
 
