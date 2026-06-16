@@ -10,6 +10,8 @@ import toast from 'react-hot-toast';
 import { resumeAPI, aiAPI } from '../api';
 import useResumeStore from '../store/resumeStore';
 import ResumeTemplate from '../components/templates';
+import { downloadResumeAsWord } from '../utils/wordExport';
+
 
 export default function ResumePreview() {
   const { id } = useParams();
@@ -146,6 +148,10 @@ export default function ResumePreview() {
             <button onClick={handleShare} className="btn-secondary py-2 px-3 text-sm gap-1.5">
               {copied ? <Check className="w-3.5 h-3.5 text-green-400" /> : <Share2 className="w-3.5 h-3.5" />}
               <span className="hidden sm:inline">{copied ? 'Copied!' : 'Share'}</span>
+            </button>
+
+            <button onClick={() => downloadResumeAsWord(currentResume)} className="btn-secondary py-2 px-4 text-sm gap-1.5" id="download-word-btn">
+              <Download className="w-3.5 h-3.5" /> Word
             </button>
 
             <button onClick={handlePrint} className="btn-primary py-2 px-4 text-sm" id="download-pdf-btn">
