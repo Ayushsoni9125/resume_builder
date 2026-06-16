@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const multer = require('multer');
 const { protect } = require('../middleware/auth');
 const {
   generateSummary,
@@ -10,10 +11,13 @@ const {
   generateExperienceDescription,
   importSocials,
   parseResume,
+  parseResumeFile,
   matchJobDescription,
   rewriteSection,
   generateCoverLetter
 } = require('../controllers/aiController');
+
+const upload = multer({ storage: multer.memoryStorage() });
 
 // All AI routes are protected
 router.use(protect);
@@ -26,6 +30,7 @@ router.post('/ats-score', calculateATSScore);
 router.post('/experience-description', generateExperienceDescription);
 router.post('/import-socials', importSocials);
 router.post('/parse', parseResume);
+router.post('/parse-file', upload.single('file'), parseResumeFile);
 router.post('/job-match', matchJobDescription);
 router.post('/rewrite', rewriteSection);
 router.post('/generate-cover-letter', generateCoverLetter);

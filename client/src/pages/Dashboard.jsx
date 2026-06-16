@@ -130,6 +130,7 @@ export default function Dashboard() {
   // Upload Parser states
   const [uploadModalOpen, setUploadModalOpen] = useState(false);
   const [uploadText, setUploadText] = useState('');
+  const [uploadFile, setUploadFile] = useState(null);
   const [isParsing, setIsParsing] = useState(false);
 
   useEffect(() => {
@@ -187,12 +188,22 @@ export default function Dashboard() {
 
   const handleUploadParse = async (e) => {
     e.preventDefault();
-    if (!uploadText.trim()) return toast.error('Please paste or upload resume text');
+    if (!uploadFile && !uploadText.trim()) {
+      return toast.error('Please paste resume text or upload a file');
+    }
     
     setIsParsing(true);
     try {
-      const { data: parseData } = await aiAPI.parseResume(uploadText);
-      const parsedResume = parseData.resumeData;
+      let parsedResume;
+      if (uploadFile) {
+        const formData = new FormData();
+        formData.append('file', uploadFile);
+        const { data: parseData } = await aiAPI.parseResumeFile(formData);
+        parsedResume = parseData.resumeData;
+      } else {
+        const { data: parseData } = await aiAPI.parseResume(uploadText);
+        parsedResume = parseData.resumeData;
+      }
       
       const { data: createData } = await resumeAPI.create({
         ...parsedResume,
@@ -208,21 +219,30 @@ export default function Dashboard() {
       setIsParsing(false);
       setUploadModalOpen(false);
       setUploadText('');
+      setUploadFile(null);
     }
   };
 
   const handleFileUpload = (e) => {
     const file = e.target.files[0];
     if (!file) return;
-    const reader = new FileReader();
-    reader.onload = (evt) => {
-      setUploadText(evt.target.result);
-      toast.success('File loaded! Click parse below to generate resume.');
-    };
-    reader.onerror = () => {
-      toast.error('Failed to read file');
-    };
-    reader.readAsText(file);
+
+    setUploadFile(file);
+
+    if (file.type === 'text/plain' || file.name.endsWith('.txt')) {
+      const reader = new FileReader();
+      reader.onload = (evt) => {
+        setUploadText(evt.target.result);
+        toast.success(`Text file "${file.name}" loaded successfully!`);
+      };
+      reader.onerror = () => {
+        toast.error('Failed to read text file');
+      };
+      reader.readAsText(file);
+    } else {
+      setUploadText(`[File loaded: ${file.name}]`);
+      toast.success(`File "${file.name}" loaded! Click parse below to generate resume.`);
+    }
   };
 
   const stats = [
@@ -348,17 +368,17 @@ export default function Dashboard() {
               </button>
             </div>
 
-            {/* Body */}
+             {/* Body */}
             <div className="p-6 space-y-4">
               <div className="text-xs text-dark-600 leading-relaxed bg-primary-500/5 border border-primary-500/10 p-3.5 rounded-2xl">
-                Paste your raw resume text or load a text file (.txt). Gemini AI will dynamically extract your experience, projects, education, and skills.
+                Paste your raw resume text or load a resume file (.pdf, .docx, .txt). Gemini AI will dynamically extract your experience, projects, education, and skills.
               </div>
 
               <div>
-                <label className="input-label">Load Text File</label>
+                <label className="input-label">Load Resume File (PDF, DOCX, TXT)</label>
                 <input
                   type="file"
-                  accept=".txt"
+                  accept=".pdf,.docx,.txt"
                   onChange={handleFileUpload}
                   className="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-primary-500/10 file:text-primary-600 hover:file:bg-primary-500/20"
                 />
@@ -370,9 +390,12 @@ export default function Dashboard() {
                   <textarea
                     placeholder="John Doe&#10;john@gmail.com&#10;Experience:&#10;- Software Engineer at Google (2022-2024)..."
                     value={uploadText}
-                    onChange={(e) => setUploadText(e.target.value)}
+                    onChange={(e) => {
+                      setUploadText(e.target.value);
+                      if (uploadFile) setUploadFile(null);
+                    }}
                     className="input-field h-48 resize-none font-sans text-xs"
-                    required
+                    required={!uploadFile}
                   />
                 </div>
 

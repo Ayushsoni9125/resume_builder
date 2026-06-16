@@ -1,4 +1,6 @@
 const { GoogleGenerativeAI } = require('@google/generative-ai');
+const pdfParse = require('pdf-parse');
+const mammoth = require('mammoth');
 
 const getGenAI = () => {
   if (!process.env.GEMINI_API_KEY || process.env.GEMINI_API_KEY === 'your_gemini_api_key_here') {
@@ -426,17 +428,9 @@ Output format (MUST be a valid raw JSON object, do not wrap in backticks or mark
   }
 };
 
-// @desc    Parse raw resume text into structured schema
-// @route   POST /api/ai/parse
-// @access  Private
-const parseResume = async (req, res) => {
-  try {
-    const { text } = req.body;
-    if (!text) {
-      return res.status(400).json({ success: false, message: 'Resume text is required' });
-    }
-
-    const prompt = `You are a professional resume parser. Parse the following raw resume text and extract all details into a structured JSON object matching the exact resume schema. Clean, standardize, and format the data.
+// Helper to parse text using Gemini
+const runGeminiResumeParser = async (text) => {
+  const prompt = `You are a professional resume parser. Parse the following raw resume text and extract all details into a structured JSON object matching the exact resume schema. Clean, standardize, and format the data.
 
 Resume Text:
 ${text}
@@ -505,13 +499,75 @@ Requirements:
   "achievements": []
 }`;
 
-    const rawText = await generateContent(prompt);
-    const jsonMatch = rawText.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) {
-      return res.status(500).json({ success: false, message: 'Failed to parse resume text into JSON' });
+  const rawText = await generateContent(prompt);
+  const jsonMatch = rawText.match(/\{[\s\S]*\}/);
+  if (!jsonMatch) {
+    throw new Error('Failed to parse resume text into structured JSON');
+  }
+  return JSON.parse(jsonMatch[0]);
+};
+
+// Helper to extract text content from PDF, DOCX, or TXT buffer
+const extractTextFromFile = async (file) => {
+  const mimeType = file.mimetype;
+  const originalName = file.originalname || '';
+
+  if (mimeType === 'application/pdf' || originalName.endsWith('.pdf')) {
+    const data = await pdfParse(file.buffer);
+    return data.text;
+  } else if (
+    mimeType === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' ||
+    originalName.endsWith('.docx')
+  ) {
+    const result = await mammoth.extractRawText({ buffer: file.buffer });
+    return result.value;
+  } else if (mimeType === 'text/plain' || originalName.endsWith('.txt')) {
+    return file.buffer.toString('utf8');
+  } else if (originalName.endsWith('.doc')) {
+    throw new Error('Older Word (.doc) format is not supported. Please save it as a PDF or .docx file and try again.');
+  } else {
+    throw new Error('Unsupported file format. Please upload a PDF, DOCX, or TXT file.');
+  }
+};
+
+// @desc    Parse raw resume text into structured schema
+// @route   POST /api/ai/parse
+// @access  Private
+const parseResume = async (req, res) => {
+  try {
+    const { text } = req.body;
+    if (!text) {
+      return res.status(400).json({ success: false, message: 'Resume text is required' });
     }
 
-    const resumeData = JSON.parse(jsonMatch[0]);
+    const resumeData = await runGeminiResumeParser(text);
+    res.json({ success: true, resumeData });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// @desc    Upload a resume file (PDF, DOCX, TXT) and parse into structured schema
+// @route   POST /api/ai/parse-file
+// @access  Private
+const parseResumeFile = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ success: false, message: 'Resume file is required' });
+    }
+
+    let text;
+    try {
+      text = await extractTextFromFile(req.file);
+    } catch (err) {
+      return res.status(400).json({ success: false, message: err.message });
+    }
+
+    if (!text || !text.trim()) {
+      return res.status(400).json({ success: false, message: 'No readable text content found in file' });
+    }
+
+    const resumeData = await runGeminiResumeParser(text);
     res.json({ success: true, resumeData });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
@@ -647,6 +703,7 @@ module.exports = {
   generateExperienceDescription,
   importSocials,
   parseResume,
+  parseResumeFile,
   matchJobDescription,
   rewriteSection,
   generateCoverLetter
