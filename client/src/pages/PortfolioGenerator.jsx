@@ -250,13 +250,13 @@ export default function PortfolioGenerator() {
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
-            <button onClick={handleCopyCode} className="btn-secondary py-2 px-3 text-sm">
-              {copied ? <CheckCircle className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4" />}
-              {copied ? 'Copied!' : 'Copy Code'}
+          <div className="flex items-center gap-1.5 sm:gap-2">
+            <button onClick={handleCopyCode} className="btn-secondary py-2 px-2.5 sm:px-3 text-xs sm:text-sm">
+              {copied ? <CheckCircle className="w-3.5 h-3.5 text-green-500" /> : <Copy className="w-3.5 h-3.5" />}
+              <span className="hidden sm:inline">{copied ? 'Copied!' : 'Copy Code'}</span>
             </button>
-            <button onClick={handleDownload} className="btn-primary py-2 px-3 text-sm">
-              <Download className="w-4 h-4" /> Download HTML
+            <button onClick={handleDownload} className="btn-primary py-2 px-2.5 sm:px-3 text-xs sm:text-sm">
+              <Download className="w-3.5 h-3.5" /> <span className="hidden sm:inline">Download HTML</span><span className="sm:hidden">Download</span>
             </button>
           </div>
         </div>

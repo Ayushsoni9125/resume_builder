@@ -286,14 +286,14 @@ export default function Dashboard() {
 
       <div className="max-w-6xl mx-auto px-4 py-8">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
           <div>
             <h1 className="text-3xl font-display font-bold text-dark-900">
               My Resumes <span className="text-gradient">✨</span>
             </h1>
             <p className="text-dark-600 mt-1">Manage and track all your professional resumes</p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
             <button onClick={() => setUploadModalOpen(true)} className="btn-secondary py-2 px-4 text-sm" id="upload-resume-btn">
               <Download className="w-4 h-4 rotate-180" /> Upload & Parse
             </button>

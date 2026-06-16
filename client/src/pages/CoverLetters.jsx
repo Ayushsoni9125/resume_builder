@@ -151,8 +151,8 @@ export default function CoverLetters() {
             </Link>
             <span className="font-display font-bold text-dark-900 text-sm">Cover Letters</span>
           </div>
-          <button onClick={() => setCreatorOpen(true)} className="btn-primary py-2 px-4 text-sm">
-            <Plus className="w-4 h-4" /> Write Cover Letter
+          <button onClick={() => setCreatorOpen(true)} className="btn-primary py-2 px-3 sm:px-4 text-xs sm:text-sm">
+            <Plus className="w-4 h-4" /> <span className="hidden sm:inline">Write Cover Letter</span><span className="sm:hidden">Write</span>
           </button>
         </div>
       </nav>
