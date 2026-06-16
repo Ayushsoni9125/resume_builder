@@ -286,6 +286,7 @@ const importSocials = async (req, res) => {
     let githubProfile = null;
     let githubRepos = null;
     let linkedinMeta = null;
+    let warning = null;
 
     if (githubUrl) {
       try {
@@ -310,7 +311,13 @@ const importSocials = async (req, res) => {
       }
     }
 
+    let linkedinUsername = null;
     if (linkedinUrl) {
+      const match = linkedinUrl.match(/linkedin\.com\/in\/([^/]+)/);
+      if (match) {
+        linkedinUsername = match[1];
+      }
+
       try {
         let url = linkedinUrl.trim();
         if (!url.startsWith('http://') && !url.startsWith('https://')) {
@@ -336,14 +343,27 @@ const importSocials = async (req, res) => {
             ogTitle: ogTitle ? ogTitle[1] : null,
             ogDescription: ogDesc ? ogDesc[1] : null
           };
+        } else {
+          warning = `LinkedIn profile fetch returned status ${response.status}. Profile details could not be directly parsed.`;
         }
       } catch (err) {
         console.error('Error fetching LinkedIn:', err.message);
+        warning = `LinkedIn profile fetch failed: ${err.message}`;
       }
     }
 
-    if (!githubProfile && !linkedinMeta) {
-      return res.status(400).json({ success: false, message: 'Could not fetch any information from the provided profile URLs.' });
+    // Fallback: if LinkedIn fetch failed/blocked but we parsed username, create skeleton metadata
+    if (linkedinUrl && !linkedinMeta && linkedinUsername) {
+      linkedinMeta = {
+        username: linkedinUsername,
+        note: "LinkedIn request blocked. Extracted username slug to guess developer name."
+      };
+    }
+
+    if (!githubProfile && (!linkedinMeta || linkedinMeta.note)) {
+      if (!githubProfile && !linkedinUsername) {
+        return res.status(400).json({ success: false, message: 'Could not fetch or parse any profile details. Please check the URLs.' });
+      }
     }
 
     const prompt = `You are an expert resume assistant. Analyze the following social media data for a developer:

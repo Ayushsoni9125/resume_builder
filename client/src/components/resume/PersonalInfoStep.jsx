@@ -59,7 +59,11 @@ export default function PersonalInfoStep() {
           updateSection('projects', projects);
         }
         
-        toast.success('Resume details imported successfully! ✨');
+        if (data.warning) {
+          toast(data.warning, { icon: '⚠️', duration: 6000 });
+        } else {
+          toast.success('Resume details imported successfully! ✨');
+        }
       } else {
         toast.error('Could not parse profile details.');
       }
